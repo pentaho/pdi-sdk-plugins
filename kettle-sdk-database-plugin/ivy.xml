@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+  <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}"/>
+
+  <configurations>
+    <conf name="default"/>
+    <conf name="test" visibility="private"/>
+    <conf name="source"/>
+  </configurations>
+
+  <dependencies defaultconf="default">
+
+	<!-- jdbc driver dependencies -->
+	<dependency org="net.sourceforge.csvjdbc" name="csvjdbc" rev="1.0.9" transitive="false"/>
+    
+    <!-- kettle dependencies -->
+    <dependency org="pentaho-kettle" name="kettle-core" rev="${project.revision}" transitive="false" changing="true"/>
+	<dependency org="pentaho-kettle" name="kettle-db" rev="${project.revision}" transitive="false" changing="true"/>    
+
+    <!-- testing dependencies -->
+    <dependency org="junit" name="junit" rev="3.8.1" transitive="false" conf="test->default"/>
+  </dependencies>
+</ivy-module>

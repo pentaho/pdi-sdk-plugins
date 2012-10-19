@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<project name="PdiSdkDemoStepPlugin" default="dist" basedir="..">
+	<description>
+        Build file for a PDI step plugin
+    </description>
+
+	<!-- you can use this file to set the kettle-dir property or change it directly below -->
+	<property file="build/build.properties" />
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="classes" location="classes" />
+	<property name="dist" location="dist" />
+	<property name="diststep" location="${dist}/steps/Demo" />
+	<property name="pluginname" value="Demo" />
+	<property name="jarfilename" value="demo-step.jar" />
+
+	<!-- used to compile code -->
+	<path id="compile.classpath">
+		<fileset dir="${basedir}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="init">
+		<tstamp />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source ">
+		<mkdir dir="${classes}" />
+		<javac target="1.6" srcdir="${src}" destdir="${classes}" debuglevel="lines,vars,source" debug="true">
+			<classpath refid="compile.classpath" />
+
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="generate the distribution">
+
+		<mkdir dir="${diststep}" />
+
+		<!-- jar things up, also add the properties files (messages) -->
+		<copy todir="${classes}">
+			<fileset dir="${src}" includes="**/*.properties" />
+		</copy>
+
+		<!-- jar class up -->
+		<jar jarfile="${diststep}/${jarfilename}" basedir="${classes}"/>
+
+		<!-- Put the plugin.xml and icon into dist folder -->
+		<copy todir="${diststep}">
+			<fileset dir="plugin" includes="**/*.*" />
+			<fileset dir="plugin" includes="**" />
+		</copy>
+
+	</target>
+	
+	<target name="install" depends="dist" description="compile and install into local PDI installation">
+		
+		<echo message="Looking for local PDI installation in ${kettle-dir}"/>
+		
+		<!-- change these to adapt to your environment -->
+		<property name="kettle-dir" location="your_kettle_4.x_dir_here" />
+		<available file="${kettle-dir}" type="dir" property="kettle-dir.present" />
+
+		<fail unless="kettle-dir.present" message="PDI installation not found. Please specify the path to your PDI installation in build/build.properties" />
+		
+		<!-- remove previous installations -->
+		<delete dir="${kettle-dir}/plugins/steps/${pluginname}" />
+
+		<!-- put fresh files in place -->
+		<mkdir dir="${kettle-dir}/plugins/steps/${pluginname}" />
+
+		<copy todir="${kettle-dir}/plugins/steps/${pluginname}">
+			<fileset dir="${diststep}" includes="**/*.*" />
+			<fileset dir="${diststep}" includes="**" />
+		</copy>
+		
+		
+		<echo message="Installed the plugin in PDI. To test, please restart Spoon."/>
+		
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${classes}" />
+		<delete dir="${dist}" />
+	</target>
+
+</project>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	id: 			String uniquely identifying the job entry. Used in serialization. 
+	iconfile:		The job entry icon used in spoon
+	description: 	The name of the job entry as it appears in Spoon
+	tooltip:		The tooltip of the job entry as it appears in Spoon
+	category:		The job entry category in the tree view in Spoon
+	classname:		The job entry class implementing JobeEntryInterface
+ -->
+<plugin
+   id="DemoJobEntry"
+   iconfile="icon.png"
+   description="Demo"
+   tooltip="Demo Job Entry Tooltip"
+   category="Conditions"
+   classname="org.pentaho.di.sdk.samples.jobentries.demo.JobEntryDemo">
+		
+		<!-- the list of jar files to include when loading the job entry -->
+		<libraries>
+			<!-- the classes implementing the job entry interfaces are in this jar -->
+    		<library name="demo-jobentry.jar"/>
+    		
+    		<!-- specify additional jars to be included when loading the job entry plug-in -->
+    		<!--  
+    			<library name="lib/some-additional-jar.jar"/>
+    		 -->
+		</libraries>
+		
+</plugin>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+  <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}"/>
+
+  <configurations>
+    <conf name="default"/>
+    <conf name="test" visibility="private"/>
+    <conf name="source"/>
+  </configurations>
+
+  <dependencies defaultconf="default">
+
+    <!-- kettle dependencies -->
+    <dependency org="pentaho-kettle" name="kettle-core" rev="${project.revision}" transitive="false" changing="true"/>
+	<dependency org="pentaho-kettle" name="kettle-engine" rev="${project.revision}" transitive="false" changing="true"/>    
+	<dependency org="pentaho-kettle" name="kettle-db" rev="${project.revision}" transitive="false" changing="true"/>
+	<dependency org="pentaho-kettle" name="kettle-ui-swt" rev="${project.revision}" transitive="false" changing="true"/>
+
+	<!-- swt dependencies -->
+	<dependency org="org.eclipse.swt" name="swt-win32" rev="3.3.0.3346" transitive="false" changing="false"/>
+	
+    <!-- testing dependencies -->
+    <dependency org="junit" name="junit" rev="3.8.1" transitive="false" conf="test->default"/>
+    <dependency org="log4j" name="log4j" rev="1.2.16" transitive="false" conf="test->default"/>
+    
+  </dependencies>
+</ivy-module>
