@@ -20,6 +20,7 @@
   <target name="default" depends="package" />
 
   <target name="init-ivy" >
+    <mkdir dir="${dist.dir}" />    
           <path id="ivy.lib.path">
               <fileset dir="${user.home}/.subfloor/ivy" includes="*.jar"/>
           </path>
