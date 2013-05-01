@@ -15,7 +15,6 @@
     
     <!-- kettle dependencies -->
     <dependency org="pentaho-kettle" name="kettle-core" rev="${project.revision}" transitive="false" changing="true"/>
-	<dependency org="pentaho-kettle" name="kettle-db" rev="${project.revision}" transitive="false" changing="true"/>    
 
     <!-- testing dependencies -->
     <dependency org="junit" name="junit" rev="3.8.1" transitive="false" conf="test->default"/>
