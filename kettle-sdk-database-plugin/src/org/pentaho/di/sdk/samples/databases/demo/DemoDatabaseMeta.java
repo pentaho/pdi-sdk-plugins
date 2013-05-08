@@ -143,7 +143,7 @@ public class DemoDatabaseMeta extends BaseDatabaseMeta implements DatabaseInterf
 	 * Returns the jar files required for the driver to work.
 	 */
 	public String[] getUsedLibraries() {
-		return new String[] { "csvjdbc.jar" };
+		return new String[] { "csvjdbc-1.0.9.jar" };
 	}
 	
 	/**
