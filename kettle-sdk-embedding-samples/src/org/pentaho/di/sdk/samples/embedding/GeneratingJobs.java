@@ -180,7 +180,7 @@ public class GeneratingJobs {
 			
 			jobMeta.addJobEntry(abortEntry);		
 			
-			// connect logging entry to abort entry on TRUE evaluation 
+			// connect logging entry to abort entry on FALSE evaluation 
 			JobHopMeta redHop = new JobHopMeta(writeToLogEntry, abortEntry);
 			redHop.setEvaluation(false);
 			jobMeta.addJobHop(redHop);

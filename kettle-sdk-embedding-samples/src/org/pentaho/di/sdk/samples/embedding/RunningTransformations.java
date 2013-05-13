@@ -27,9 +27,9 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.logging.CentralLogStore;
-import org.pentaho.di.core.logging.Log4jBufferAppender;
+import org.pentaho.di.core.logging.KettleLogStore;
 import org.pentaho.di.core.logging.LogLevel;
+import org.pentaho.di.core.logging.LoggingBuffer;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.RepositoryPluginType;
 import org.pentaho.di.repository.RepositoriesMeta;
@@ -71,7 +71,7 @@ public class RunningTransformations {
 		Trans trans = instance.runTransformationFromFileSystem("etl/parametrized_transformation.ktr");
 		
 		// retrieve logging appender
-		Log4jBufferAppender appender = CentralLogStore.getAppender();
+		LoggingBuffer appender = KettleLogStore.getAppender();
 		// retrieve logging lines for job
 		String logText = appender.getBuffer(trans.getLogChannelId(), false).toString();
 
