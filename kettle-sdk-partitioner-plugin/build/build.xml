@@ -28,7 +28,7 @@
 
 	<target name="compile" depends="init" description="compile the source ">
 		<mkdir dir="${classes}" />
-		<javac target="1.6" srcdir="${src}" destdir="${classes}" debuglevel="lines,vars,source" debug="true">
+		<javac source="1.6" target="1.6" srcdir="${src}" destdir="${classes}" debuglevel="lines,vars,source" debug="true">
 			<classpath refid="compile.classpath" />
 
 		</javac>
