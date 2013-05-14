@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.core.Result;
+import org.pentaho.di.core.annotations.JobEntry;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleException;
@@ -36,6 +37,7 @@ import org.pentaho.di.job.entry.JobEntryBase;
 import org.pentaho.di.job.entry.JobEntryInterface;
 import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
+import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
 /**
@@ -55,7 +57,14 @@ import org.w3c.dom.Node;
  * - execute the job entry logic and provide a job entry result
  * 
  */
-
+@JobEntry(	
+		id = "DemoJobEntry",
+		image = "org/pentaho/di/sdk/samples/jobentries/demo/resources/icon.png",
+		i18nPackageName="org.pentaho.di.sdk.samples.jobentries.demo",
+		name="DemoJobEntry.Name",
+		description = "DemoJobEntry.TooltipDesc",
+		categoryDescription="i18n:org.pentaho.di.job:JobCategory.Category.Conditions"
+)
 public class JobEntryDemo extends JobEntryBase implements Cloneable, JobEntryInterface{
 	
 	/**
@@ -120,6 +129,7 @@ public class JobEntryDemo extends JobEntryBase implements Cloneable, JobEntryInt
 	 * Note: the returned string must include the output of super.getXML() as well
 	 * @return a string containing the XML serialization of this job entry
 	 */	
+    @Override
 	public String getXML(){		
         StringBuffer retval = new StringBuffer(200);
 	
@@ -141,8 +151,10 @@ public class JobEntryDemo extends JobEntryBase implements Cloneable, JobEntryInt
 	 * @param databases		the databases available in the job
 	 * @param slaveServers	the slave servers available in the job
 	 * @param rep			the repository connected to, if any
+	 * @param metaStore		the metastore to optionally read from
 	 */	
-	public void loadXML(Node entrynode, List<DatabaseMeta> databases, List<SlaveServer> slaveServers, Repository rep) throws KettleXMLException {
+    @Override
+	public void loadXML(Node entrynode, List<DatabaseMeta> databases, List<SlaveServer> slaveServers, Repository rep, IMetaStore metaStore) throws KettleXMLException {
 		
 		try{
 			super.loadXML(entrynode, databases, slaveServers);
@@ -159,8 +171,10 @@ public class JobEntryDemo extends JobEntryBase implements Cloneable, JobEntryInt
 	 *
 	 * @param rep		the repository to save to
 	 * @param id_job	the id to use for the job when saving
+	 * @param metaStore		the metastore to optionally write to 
 	 */	
-	public void saveRep(Repository rep, ObjectId id_job) throws KettleException{
+    @Override
+	public void saveRep(Repository rep, IMetaStore metaStore, ObjectId id_job) throws KettleException{
 		
 		try{
 			rep.saveJobEntryAttribute(id_job, getObjectId(), "outcome", outcome);
@@ -175,11 +189,13 @@ public class JobEntryDemo extends JobEntryBase implements Cloneable, JobEntryInt
 	 * The repository implementation provides the necessary methods to read the job entry attributes.
 	 * 
 	 * @param rep			the repository to read from
+	 * @param metaStore		the metastore to optionally read from
 	 * @param id_jobentry	the id of the job entry being read
 	 * @param databases		the databases available in the job
 	 * @param slaveServers	the slave servers available in the job
-	 */	
-	public void loadRep(Repository rep, ObjectId id_jobentry, List<DatabaseMeta> databases, List<SlaveServer> slaveServers) throws KettleException{
+	 */
+    @Override
+	public void loadRep(Repository rep, IMetaStore metaStore, ObjectId id_jobentry, List<DatabaseMeta> databases, List<SlaveServer> slaveServers) throws KettleException{
 		try{
 			outcome = rep.getJobEntryAttributeBoolean(id_jobentry, "outcome");
 		}

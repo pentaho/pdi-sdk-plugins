@@ -28,7 +28,7 @@
 
 	<target name="compile" depends="init" description="compile the source ">
 		<mkdir dir="${classes}" />
-		<javac target="1.6" srcdir="${src}" destdir="${classes}" debuglevel="lines,vars,source" debug="true">
+		<javac source="1.6" target="1.6" srcdir="${src}" destdir="${classes}" debuglevel="lines,vars,source" debug="true">
 			<classpath refid="compile.classpath" />
 
 		</javac>
@@ -38,19 +38,14 @@
 
 		<mkdir dir="${diststep}" />
 
-		<!-- jar things up, also add the properties files (messages) -->
+		<!-- jar things up, also add the properties and icong files -->
 		<copy todir="${classes}">
 			<fileset dir="${src}" includes="**/*.properties" />
+			<fileset dir="${src}" includes="**/*.png" />
 		</copy>
 
 		<!-- jar class up -->
 		<jar jarfile="${diststep}/${jarfilename}" basedir="${classes}"/>
-
-		<!-- Put the plugin.xml and icon into dist folder -->
-		<copy todir="${diststep}">
-			<fileset dir="plugin" includes="**/*.*" />
-			<fileset dir="plugin" includes="**" />
-		</copy>
 
 	</target>
 	
@@ -59,7 +54,7 @@
 		<echo message="Looking for local PDI installation in ${kettle-dir}"/>
 		
 		<!-- change these to adapt to your environment -->
-		<property name="kettle-dir" location="your_kettle_4.x_dir_here" />
+		<property name="kettle-dir" location="your_kettle_5.x_dir_here" />
 		<available file="${kettle-dir}" type="dir" property="kettle-dir.present" />
 
 		<fail unless="kettle-dir.present" message="PDI installation not found. Please specify the path to your PDI installation in build/build.properties" />
