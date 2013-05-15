@@ -23,6 +23,7 @@
 package org.pentaho.di.sdk.samples.steps.demo;
 
 
+import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMeta;
@@ -31,14 +32,14 @@ import junit.framework.TestCase;
 
 public class DemoStepTest extends TestCase {
 
-	public void testStepMeta(){
+	public void testStepMeta() throws KettleStepException{
 		
 		
 		DemoStepMeta m = new DemoStepMeta();
 		m.setDefault();
 		
 		RowMetaInterface rowMeta = new RowMeta();
-		m.getFields(rowMeta, "demo_step", null, null, null);
+		m.getFields(rowMeta, "demo_step", null, null, null, null, null);
 		
 		// expect one field to be added to the row stream
 		assertEquals(rowMeta.size(), 1);

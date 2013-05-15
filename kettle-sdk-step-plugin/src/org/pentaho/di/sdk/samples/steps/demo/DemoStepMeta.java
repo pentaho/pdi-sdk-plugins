@@ -23,14 +23,14 @@
 package org.pentaho.di.sdk.samples.steps.demo;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.di.core.CheckResult;
 import org.pentaho.di.core.CheckResultInterface;
-import org.pentaho.di.core.Counter;
+import org.pentaho.di.core.annotations.Step;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -49,6 +49,7 @@ import org.pentaho.di.trans.step.StepDialogInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
 /**
@@ -68,6 +69,15 @@ import org.w3c.dom.Node;
  * - perform a sanity-check on the settings provided by the user 
  * 
  */
+
+@Step(	
+		id = "DemoStep",
+		image = "org/pentaho/di/sdk/samples/steps/demo/resources/icon.png",
+		i18nPackageName="org.pentaho.di.sdk.samples.steps.demo",
+		name="DemoStep.Name",
+		description = "DemoStep.TooltipDesc",
+		categoryDescription="i18n:org.pentaho.di.trans.step:BaseStep.Category.Transform"
+)
 public class DemoStepMeta extends BaseStepMeta implements StepMetaInterface {
 
 	/**
@@ -187,9 +197,9 @@ public class DemoStepMeta extends BaseStepMeta implements StepMetaInterface {
 	 * 
 	 * @param stepnode	the XML node containing the configuration
 	 * @param databases	the databases available in the transformation
-	 * @param counters	the counters available in the transformation
+	 * @param metaStore the metaStore to optionally read from
 	 */
-	public void loadXML(Node stepnode, List<DatabaseMeta> databases, Map<String, Counter> counters) throws KettleXMLException {
+	public void loadXML(Node stepnode, List<DatabaseMeta> databases, IMetaStore metaStore) throws KettleXMLException {
 
 		try {
 			setOutputField(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "outputfield")));
@@ -203,10 +213,11 @@ public class DemoStepMeta extends BaseStepMeta implements StepMetaInterface {
 	 * The repository implementation provides the necessary methods to save the step attributes.
 	 *
 	 * @param rep					the repository to save to
+	 * @param metaStore				the metaStore to optionally write to
 	 * @param id_transformation		the id to use for the transformation when saving
 	 * @param id_step				the id to use for the step  when saving
 	 */
-	public void saveRep(Repository rep, ObjectId id_transformation, ObjectId id_step) throws KettleException
+	public void saveRep(Repository rep, IMetaStore metaStore, ObjectId id_transformation, ObjectId id_step) throws KettleException
 	{
 		try{
 			rep.saveStepAttribute(id_transformation, id_step, "outputfield", outputField); //$NON-NLS-1$
@@ -221,11 +232,12 @@ public class DemoStepMeta extends BaseStepMeta implements StepMetaInterface {
 	 * The repository implementation provides the necessary methods to read the step attributes.
 	 * 
 	 * @param rep		the repository to read from
+	 * @param metaStore	the metaStore to optionally read from
 	 * @param id_step	the id of the step being read
 	 * @param databases	the databases available in the transformation
 	 * @param counters	the counters available in the transformation
 	 */
-	public void readRep(Repository rep, ObjectId id_step, List<DatabaseMeta> databases, Map<String, Counter> counters) throws KettleException {
+	public void readRep(Repository rep, IMetaStore metaStore, ObjectId id_step, List<DatabaseMeta> databases) throws KettleException  {
 		try{
 			outputField  = rep.getStepAttributeString(id_step, "outputfield"); //$NON-NLS-1$
 		}
@@ -240,35 +252,31 @@ public class DemoStepMeta extends BaseStepMeta implements StepMetaInterface {
 	 * the step. This method must apply any changes the step makes to the row stream. Usually a step adds fields to the
 	 * row-stream.
 	 * 
-	 * @param r			the row structure coming in to the step
-	 * @param origin	the name of the step making the changes
-	 * @param info		row structures of any info steps coming in
-	 * @param nextStep	the description of a step this step is passing rows to
-	 * @param space		the variable space for resolving variables
+	 * @param inputRowMeta		the row structure coming in to the step
+	 * @param name 				the name of the step making the changes
+	 * @param info				row structures of any info steps coming in
+	 * @param nextStep			the description of a step this step is passing rows to
+	 * @param space				the variable space for resolving variables
+	 * @param repository		the repository instance optionally read from
+	 * @param metaStore			the metaStore to optionally read from
 	 */
-	public void getFields(RowMetaInterface r, String origin, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space) {
+	public void getFields(RowMetaInterface inputRowMeta, String name, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space, Repository repository, IMetaStore metaStore) throws KettleStepException{
 
 		/*
 		 * This implementation appends the outputField to the row-stream
 		 */
 
 		// a value meta object contains the meta data for a field
-		ValueMetaInterface v = new ValueMeta();
-
-		// set the name of the new field 
-		v.setName(outputField);
-		
-		// type is going to be string
-		v.setType(ValueMeta.TYPE_STRING);
+		ValueMetaInterface v = new ValueMeta(outputField, ValueMeta.TYPE_STRING);
 		
 		// setting trim type to "both"
 		v.setTrimType(ValueMeta.TRIM_TYPE_BOTH);
 
 		// the name of the step that adds this field
-		v.setOrigin(origin);
+		v.setOrigin(name);
 		
 		// modify the row structure and add the field this step generates  
-		r.addValueMeta(v);
+		inputRowMeta.addValueMeta(v);
 		
 	}
 
@@ -290,8 +298,9 @@ public class DemoStepMeta extends BaseStepMeta implements StepMetaInterface {
 	 *   @param input		names of steps sending input to the step
 	 *   @param output		names of steps this step is sending output to
 	 *   @param info		fields coming in from info steps 
+	 *   @param metaStore	metaStore to optionally read from
 	 */
-	public void check(List<CheckResultInterface> remarks, TransMeta transmeta, StepMeta stepMeta, RowMetaInterface prev, String input[], String output[], RowMetaInterface info) {
+	public void check(List<CheckResultInterface> remarks, TransMeta transMeta, StepMeta stepMeta, RowMetaInterface prev, String input[], String output[], RowMetaInterface info, VariableSpace space, Repository repository, IMetaStore metaStore)  {
 		
 		CheckResult cr;
 

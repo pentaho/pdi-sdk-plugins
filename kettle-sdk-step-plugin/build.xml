@@ -40,14 +40,11 @@
 		<copy todir="${approot.stage.dir}/build">
 			<fileset dir="build" />
 		</copy>
-
-		<copy todir="${approot.stage.dir}/plugin">
-			<fileset dir="plugin" />
-		</copy>
 		
 		<copy file="eclipse/classpath.xml" tofile="${approot.stage.dir}/.classpath">
 		    <filterset>
 		      <filter token="PROJECT-REVISION" value="${project.revision}"/>
+		      <filter token="METASTORE-REVISION" value="${dependency.pentaho-metadata.revision}"/>
 		    </filterset>			
 		</copy>
 		<copy file="eclipse/project.xml" tofile="${approot.stage.dir}/.project" />

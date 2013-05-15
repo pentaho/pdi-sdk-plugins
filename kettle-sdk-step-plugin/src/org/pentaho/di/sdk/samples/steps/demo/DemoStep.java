@@ -139,7 +139,7 @@ public class DemoStep extends BaseStep implements StepInterface {
 			// clone the input row structure and place it in our data object
 			data.outputRowMeta = (RowMetaInterface) getInputRowMeta().clone();
 			// use meta.getFields() to change it, so it reflects the output row structure 
-			meta.getFields(data.outputRowMeta, getStepname(), null, null, this);
+			meta.getFields(data.outputRowMeta, getStepname(), null, null, this, null, null);
 		}
 
 		// safely add the string "Hello World!" at the end of the output row
