@@ -55,5 +55,11 @@
 		<copy file="eclipse/project.xml" tofile="${approot.stage.dir}/.project" />
 			
 	</target>
+	
+  <!-- Compensate for subfloor-pkg issue where init does not create a package-res directory if not exist.
+      This project has had an empty package-res dir in the past -->
+  <target name="init" depends="subfloor.init">
+      <mkdir dir="${package.resdir}" />
+  </target>	
 
 </project>
