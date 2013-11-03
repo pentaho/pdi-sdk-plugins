@@ -55,4 +55,8 @@
 			
 	</target>
 	
+	  <target name="assemble" depends="assemble.init,assemble.copy-libs">
+	    <chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
+	  </target>
+	
 </project>
