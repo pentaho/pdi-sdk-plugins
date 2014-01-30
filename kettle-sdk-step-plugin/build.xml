@@ -28,9 +28,9 @@
 			- include eclipse project files for convenience
 	-->
 	<target name="assemble.copy-libs">
-		
+
 		<copy todir="${approot.stage.dir}/lib">
-			<fileset dir="${lib.dir}"/>
+			<fileset dir="${lib.dir}" />
 		</copy>
 
 		<copy todir="${approot.stage.dir}/src">
@@ -44,14 +44,20 @@
 		<copy todir="${approot.stage.dir}/plugin">
 			<fileset dir="plugin" />
 		</copy>
-		
+
 		<copy file="eclipse/classpath.xml" tofile="${approot.stage.dir}/.classpath">
-		    <filterset>
-		      <filter token="PROJECT-REVISION" value="${project.revision}"/>
-		    </filterset>			
+			<filterset>
+				<filter token="PROJECT-REVISION" value="${project.revision}" />
+			</filterset>
 		</copy>
 		<copy file="eclipse/project.xml" tofile="${approot.stage.dir}/.project" />
-			
+
 	</target>
 
+	<!-- override subfloor-pkg.xml -->
+	<target name="assemble" depends="assemble.init,assemble.copy-libs">
+		<chmod perm="a+x" dir="${stage.dir}" includes="**/*.sh" />
+	</target>
+
+	
 </project>
