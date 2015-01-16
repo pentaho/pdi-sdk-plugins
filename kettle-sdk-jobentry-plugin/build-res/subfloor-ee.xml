@@ -1,0 +1,673 @@
+<project name="subfloor-ee" basedir="." default="default" xmlns:ivy="antlib:org.apache.ivy.ant">
+  
+  <!-- This property is here to make Eclipse happy. File that imports this file should set the property. -->
+  <property name="subfloor-ee.parent.file" value="subfloor.xml" />
+  
+  <import file="${subfloor-ee.parent.file}" />
+
+  <property name="prepared.src.dir" value="${bin.dir}/prepared-src" description="Modified source" />
+
+  <property name="proguard.revision" value="4.9" />
+  <property name="approot.stage.lib.dir" value=""/>
+  <property name="approot.stage.artifact.dir" value=""/>
+  <property name="assemble.copy-libs.includes" value="**/*.jar" />
+  <property name="assemble.copy-libs.includes.obf" value="**/*.jar*" />
+  <property name="assemble.copy-libs.excludes" value="" />
+  <property name="assemble.copy-libs.excludes.obf" value="" />
+  <property name="assemble.copy-obflibs.includes" value="*-obf.jar" />
+  <property name="obf.libdir.filter" value="!*-obf.jar"/>
+  <property name="obf.artifact.injar.filter" value=""/>
+  <!-- The value for obf.libraryjars is an entire proguard parameter line, not just the lib itself -->
+  <property name="obf.libraryjars" value=""/>
+  <property name="proguard.file" value="proguard.pro"/>
+  
+  <!-- begin remove for the customer src dist -->
+  <property name="customer.stage.dir" value="${bin.dir}/customer-stage" />
+  <property name="customer.id" value="1" />
+  <property name="customer.source.build.cache.dir"
+            value="${subfloor.resources.dir}/customer-source"
+            description="Directory where the customer source modification task is placed after it is auto-downloaded by the build" />
+  <property file="customers.properties"
+            description="This file contains a list of customers and their associated ids" />
+  <!-- end remove for the customer src dist -->
+  <property name="obflib.dir"
+            value="${basedir}/obf-lib"
+            description="Directory for obfuscated jar files and maps needed during obfuscation" />
+  
+  <!-- Override to put mock license JAR first -->
+  <path id="test.classpath">
+    <fileset dir="${devlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${testlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <dirset dir="${testclasses.dir}" />
+    <dirset dir="${classes.dir}" />
+  </path>
+  
+    <target name="resolve-obf" depends="resolve-init">
+      <mkdir dir="${obflib.dir}" />
+      <ivy:resolve file="${ivyfile}" conf="obf" />
+      <ivy:retrieve conf="obf" pattern="${obflib.dir}/[module]-[revision](-[classifier]).[ext]" symlink="${ivy.use.symlinks.internal}" />
+      
+      <!-- extract *-proguard-*.jar, delete -->
+    <foreach target="proguard-artifact-extract" param="file">
+      <fileset dir="${obflib.dir}" casesensitive="yes">
+           <include name="**/*-proguard-*.zip"/>
+         </fileset>
+    </foreach>
+      <property name="resolve-obf.executed" value="true" />
+    </target> 
+  
+    <target name="proguard-artifact-extract">
+      <unzip src="${file}" dest="${obflib.dir}"/>
+      <delete file="${file}"/>
+    </target>
+  
+  <!--=======================================================================
+      install-proguard
+  
+      (Fetches and) installs proguard task
+    ====================================================================-->
+  <target name="install-proguard" depends="install-ivy">
+      <if>
+        <istrue value="${proguard.isinstalled}" />
+        <then>
+          <echo message="Skipping proguard install.  Proguard has already been configured by the build" />
+        </then>
+        <else>
+          <echo message="Installing proguard..." />
+          <taskdef-with-ivy organisation="net.sf.proguard"
+                            module="proguard-anttask"
+                            revision="${proguard.revision}"
+                            task-name="proguard"
+                          resource="proguard/ant/task.properties"
+                            classname="proguard.ant.ProGuardTask" />
+            <property name="proguard.isinstalled" value="true" />
+        </else>
+      </if>
+    </target> 
+  
+  <!--=======================================================================
+    Override - maven-publish.post - publish obfuscation related artifacts
+    ====================================================================-->
+  <target name="maven-publish.post">
+    <!-- publish ${ivy.artifact.id}-proguard (zip) -->
+    <if>
+          <available file="${dist.dir}/${ivy.artifact.id}-proguard-${project.revision}.zip" />
+      <then>
+        <antcall target="maven-publish-proguard-artifact">
+            <param name="publish.artifactId" value="${ivy.artifact.id}-proguard" />
+            <param name="publish.groupId" value="${ivy.artifact.group}" />
+          <param name="publish.version" value="${project.revision}" />
+            <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-proguard-${project.revision}.zip" />
+            </antcall>
+      </then>
+    </if>
+  </target>
+  
+  <!--=======================================================================
+      publish-local-nojar.post OVERRIDE
+      ====================================================================-->
+    <target name="publish-local-nojar.post">
+    <!-- publish ${ivy.artifact.id}-proguard (zip) -->
+    <if>
+          <available file="${dist.dir}/${ivy.artifact.id}-proguard-${project.revision}.zip" />
+      <then>
+            <antcall target="publish-local-nojar.internal">
+              <param name="ivy.artifact.id" value="${ivy.artifact.id}-proguard"/>
+            </antcall>
+      </then>
+    </if>
+    </target> 
+  
+    <!--=======================================================================
+        maven-publish-proguard-artifact
+        ====================================================================-->
+    <target name="maven-publish-proguard-artifact" depends="install-antcontrib">
+      <sequential>
+        <fail message="No file found at: ${publish.file}">
+          <condition>
+            <not>
+              <available file="${publish.file}" />
+            </not>
+          </condition>
+        </fail>
+        <echo message="Publishing ${publish.file} to ${ivy.repository.publish}..." />
+        <if>
+          <isset property="isWindows" />
+          <then>
+            <exec executable="cmd" failonerror="true">
+              <arg value="/c" />
+              <arg value="mvn.bat" />
+              <arg value="deploy:deploy-file" />
+              <arg value="-DrepositoryId=${ivy.repository.id}" />
+              <arg value="-Durl=${ivy.repository.publish}" />
+              <arg value="-DgroupId=${publish.groupId}" />
+              <arg value="-DartifactId=${publish.artifactId}" />
+              <arg value="-Dversion=${publish.version}" />
+              <arg value="-DgeneratePom=true" />
+              <arg value="-Dpackaging=zip" />
+              <arg value="-Dfile=${publish.file}" />
+            </exec>
+          </then>
+          <else>
+            <exec executable="mvn" failonerror="true">
+              <arg value="deploy:deploy-file" />
+              <arg value="-DrepositoryId=${ivy.repository.id}" />
+              <arg value="-Durl=${ivy.repository.publish}" />
+              <arg value="-DgroupId=${publish.groupId}" />
+              <arg value="-DartifactId=${publish.artifactId}" />
+              <arg value="-Dversion=${publish.version}" />
+              <arg value="-DgeneratePom=true" />
+              <arg value="-Dpackaging=zip" />
+              <arg value="-Dfile=${publish.file}" />
+            </exec>
+          </else>
+        </if>
+      </sequential>
+    </target> 
+  
+  
+
+  
+  <target name="obfuscate" depends="install-proguard, resolve-obf, obfuscate.pre">
+
+    <copy file="${proguard.file}" todir="${dist.dir}" overwrite="true" failonerror="false"/>
+    <touch file="${dist.dir}/${proguard.file}"/>
+
+    <!-- copy all .map files from obf-lib into a singular map file -->
+    <delete file="${dist.dir}/proguard-merged.map"/>
+    <touch file="${dist.dir}/proguard-merged.map"/>
+        <concat destfile="${dist.dir}/proguard-merged.map" append="true">
+          <fileset dir="${obflib.dir}" includes="**/*.map"/>
+        </concat>
+    
+    <replace file="${dist.dir}/${proguard.file}" value="${dist.dir}">
+      <replacetoken><![CDATA[${dist.dir}]]></replacetoken>
+    </replace>    
+
+    <replace file="${dist.dir}/${proguard.file}" value="${ivy.artifact.id}">
+      <replacetoken><![CDATA[${ivy.artifact.id}]]></replacetoken>
+    </replace>      
+
+    <replace file="${dist.dir}/${proguard.file}" value="${project.revision}">
+      <replacetoken><![CDATA[${project.revision}]]></replacetoken>
+    </replace>      
+    
+        <!-- begin remove for the customer src dist -->
+    <replace file="${dist.dir}/${proguard.file}" value="${dependency.pentaho-ee-dsc.revision}">
+      <replacetoken><![CDATA[${dependency.pentaho-ee-dsc.revision}]]></replacetoken>
+    </replace>    
+    <!-- end remove for the customer src dist -->
+    
+    <replace file="${dist.dir}/${proguard.file}" value="${lib.dir}">
+      <replacetoken><![CDATA[${lib.dir}]]></replacetoken>
+    </replace>    
+    
+      <proguard verbose="true" configuration="${dist.dir}/${proguard.file}">
+      <![CDATA[
+    -dontoptimize
+    -dontshrink
+    -dontnote
+    -renamesourcefileattribute SourceFile
+    -ignorewarnings         
+    -dontskipnonpubliclibraryclassmembers
+    -keepattributes Exceptions, InnerClasses, *Annotation*, Signature, EnclosingMethod, SourceFile, LineNumberTable
+    -printseeds
+
+    -applymapping ${dist.dir}/proguard-merged.map
+    -printmapping ${dist.dir}/${ivy.artifact.id}-${project.revision}.map
+        
+    -libraryjars "${java.home}/lib/rt.jar"
+    -libraryjars "${java.home}/lib/jsse.jar"
+    -libraryjars "${java.home}/lib/jce.jar"
+    -libraryjars ${obflib.dir}(*-obf.jar)
+    -libraryjars ${lib.dir}(${obf.libdir.filter})
+    -libraryjars ${devlib.dir}
+    ${obf.libraryjars}
+        
+    -injars      ${dist.dir}/${ivy.artifact.id}-${project.revision}.jar(${obf.artifact.injar.filter})
+    -outjars     ${dist.dir}/${ivy.artifact.id}-${project.revision}-obf.jar
+        
+  -keepclassmembers enum * {
+       public static **[] values();
+       public static ** valueOf(java.lang.String);
+    }
+
+    -keepclassmembers class * implements java.io.Serializable {
+      static final long serialVersionUID;
+      private void writeObject(java.io.ObjectOutputStream);
+      private void readObject(java.io.ObjectInputStream);
+      java.lang.Object writeReplace();
+      java.lang.Object readResolve();
+    }
+     
+    -keep !abstract class * extends javax.servlet.** { }
+    -keep !abstract class * extends javax.ejb.** { }
+    -keep !abstract class * extends javax.jms.** { }
+
+    -keep !abstract class * implements org.pentaho.platform.api.** { }
+
+    ]]>
+    </proguard>
+
+    <antcall target="obfuscate.post"/>
+
+      <zip destfile="${dist.dir}/${ivy.artifact.id}-proguard-${project.revision}.zip">
+        <zipfileset dir="${dist.dir}" includes="**/*.map, **/*-obf.jar" excludes="**/proguard-merged.map"/>
+      </zip>    
+    
+        <property name="obfuscation.executed" value="true" />
+    
+  </target>
+  
+  <!--=======================================================================
+    obfuscate.pre
+    
+    Perform any project specific pre-obfuscation tasks
+    ====================================================================-->
+  <target name="obfuscate.pre">
+  </target> 
+  
+  <!--=======================================================================
+    obfuscate.post
+    
+    Perform any project specific post-obfuscation tasks (such as deleting original jars)
+    ====================================================================-->
+  <target name="obfuscate.post">
+  </target>
+  
+  
+  
+  <!-- ======================================== EULA assembly packaging ========================================= -->
+
+	<target name="package-eula" depends="install-antcontrib">
+
+		<property name="pentaho.resolve.repo" value="http://nexus.pentaho.org:8081/content/groups/omni" />
+
+		<if>
+			<not>
+				<isset property="pentaho-eula-assembly-pom.version"/>
+			</not>
+			<then>
+				<property name="pentaho-eula-assembly-pom.version" value="1.0.13" />
+				<echo>pentaho-eula-assembly-pom.version not set, assuming default of ${pentaho-eula-assembly-pom.version}</echo>
+			</then>
+		</if>
+		
+		<if>
+			<not>
+				<isset property="artifactName"/>
+			</not>
+			<then>
+				<property name="artifactName" value="${publish.artifactId}-${publish.version}" />
+				<echo>artifactName not set, assuming default of ${artifactName}</echo>
+			</then>
+		</if>
+		
+		<if>
+			<not>
+				<available file="${dist.dir}/pentaho-eula-assembly-pom-${pentaho-eula-assembly-pom.version}-pom.xml" type="file" />
+			</not>
+			<then>
+				<get src="${pentaho.resolve.repo}/com/pentaho/pentaho-eula-assembly-pom/${pentaho-eula-assembly-pom.version}/pentaho-eula-assembly-pom-${pentaho-eula-assembly-pom.version}-pom.xml" 
+	              dest="${dist.dir}/pentaho-eula-assembly-pom-${pentaho-eula-assembly-pom.version}-pom.xml" 
+	              verbose="true" />
+			</then>
+		</if>
+		
+		<echo>
+	          mvn
+	          -f
+	          ${dist.dir}/pentaho-eula-assembly-pom-${pentaho-eula-assembly-pom.version}-pom.xml
+	          -DartifactName=${artifactName}
+	          -Ddist.dir=${dist.dir}
+	          package
+	        </echo>
+		<if>
+			<isset property="isWindows" />
+			<then>
+				<exec executable="cmd" failonerror="true">
+					<arg value="/c" />
+					<arg value="mvn.bat" />
+					<arg value="-f" />
+					<arg value="${dist.dir}/pentaho-eula-assembly-pom-${pentaho-eula-assembly-pom.version}-pom.xml" />
+					<arg value="-DartifactName=${artifactName}" />
+					<arg value="-Ddist.dir=${dist.dir}" />
+					<arg value="package" />
+				</exec>
+			</then>
+			<else>
+				<exec executable="mvn" failonerror="true">
+					<arg value="-f" />
+					<arg value="${dist.dir}/pentaho-eula-assembly-pom-${pentaho-eula-assembly-pom.version}-pom.xml" />
+					<arg value="-DartifactName=${artifactName}" />
+					<arg value="-Ddist.dir=${dist.dir}" />
+					<arg value="package" />
+				</exec>
+			</else>
+		</if>
+
+	</target>
+
+  
+  <!--=======================================================================
+      obftest
+      
+      Verifies obfuscation in distributions. (dist target must be run first.)
+      ====================================================================-->
+  <target name="obftest">
+    <exec executable="build-res/obftest.sh" osfamily="unix" failonerror="true">
+      <arg value="${dist.dir}" />
+    </exec>
+  </target>
+  
+  <target name="assemble.copy-libs" depends="install-antcontrib">
+    <!-- if allows this target to be run before and after obfuscation -->
+
+    <!--
+    need to parameterize destination of project artifact
+    need to parameterize destination of project libs
+  -->
+    
+    <mkdir dir="${approot.stage.lib.dir}"/>
+    
+    <if>
+      <available file="${dist.dir}/${ivy.artifact.id}-${project.revision}-obf.jar" />
+      <then>
+        <copy todir="${approot.stage.dir}/${approot.stage.lib.dir}" overwrite="true">
+          <fileset dir="${lib.dir}" includes="${assemble.copy-libs.includes.obf}" excludes="${assemble.copy-libs.excludes.obf}"/>
+        </copy>
+        <copy todir="${approot.stage.dir}/${approot.stage.lib.dir}" overwrite="true"> 
+              <fileset dir="${obflib.dir}" includes="${assemble.copy-obflibs.includes}" excludes="*${ivy.artifact.id}-${project.revision}-obf.jar, *-test-*-obf.jar"/>
+              <globmapper from="*-obf.jar" to="*.jar"/>
+        </copy>
+        <copy todir="${approot.stage.dir}/${approot.stage.artifact.dir}" overwrite="true">
+              <fileset dir="${dist.dir}" includes="*${ivy.artifact.id}-${project.revision}-obf.jar"/>
+              <globmapper from="*-obf.jar" to="*.jar"/>
+        </copy>
+      
+      </then>
+      <else>
+        <!-- if release=true, we've got a problem, we should blow up here -->
+        <fail if="${release}" message="You are trying to release when the required obfuscated jar is not available!" />
+        <copy todir="${approot.stage.dir}/${approot.stage.lib.dir}">
+          <fileset dir="${lib.dir}" includes="${assemble.copy-libs.includes}" excludes="${assemble.copy-libs.excludes}"/>
+        </copy>
+        <copy todir="${approot.stage.dir}/${approot.stage.artifact.dir}">
+            <fileset file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+        </copy>
+      </else>
+    </if>
+    <antcall target="assemble.copy-libs.post"/>
+  </target>
+  
+    
+  <!--=======================================================================
+      assemble.copy-libs.post
+     
+      perform any post assembly/copy-libs tasks (noop here, override if needed)
+      ====================================================================-->
+  <target name="assemble.copy-libs.post" />
+  
+    <!-- begin remove for the customer src dist -->
+  
+    <!-- 
+       The following targets generate a source distribution for a specific EE customer.
+         These tasks remove all DSC license code and package up a src distribution. 
+      -->  
+  
+  <!--=======================================================================
+      customer-src-init
+      
+      initializes the customer source staging area
+      ====================================================================-->
+  <target name="customer-src-init" depends="install-antcontrib,init">
+    <delete dir="${customer.stage.dir}"/>
+    <mkdir dir="${customer.stage.dir}/src" />
+    <if>
+      <available file="test-src"/>
+      <then>
+        <mkdir dir="${customer.stage.dir}/test-src" />
+      </then>
+    </if>
+    <if>
+      <available file="test"/>
+      <then>
+        <mkdir dir="${customer.stage.dir}/test" />
+      </then>
+    </if>
+    <if>
+      <available file="test-res"/>
+      <then>
+        <mkdir dir="${customer.stage.dir}/test-res" />
+      </then>
+    </if>
+
+    <mkdir dir="${customer.stage.dir}/dist" />
+    <mkdir dir="${customer.stage.dir}/classes" />
+  </target>
+
+  <!--=======================================================================
+      customer-src-compile.pre
+      
+      copies over the related source files for the customer distribution
+      ====================================================================-->
+  <target name="customer-src-stage" depends="install-antcontrib,customer-src-init">
+    <copy todir="${customer.stage.dir}/src" failonerror="no" flatten="false" overwrite="true">
+      <fileset dir="${src.dir}"/>
+    </copy>
+    <copy todir="${customer.stage.dir}/test-src" failonerror="no" flatten="false" overwrite="true">
+        <fileset dir="test-src"/>
+    </copy>
+    <copy todir="${customer.stage.dir}/test" failonerror="no" flatten="false" overwrite="true">
+        <fileset dir="test"/>
+    </copy>
+    <copy todir="${customer.stage.dir}/package-res"  failonerror="no" flatten="false" overwrite="true">
+        <fileset dir="package-res" />
+  </copy>
+    <copy todir="${customer.stage.dir}/res"  failonerror="no" flatten="false" overwrite="true">
+      <fileset dir="res" />
+    </copy>
+    <copy todir="${customer.stage.dir}/test-res" failonerror="no" flatten="false" overwrite="true">
+        <fileset dir="test-res"/>
+  </copy>
+    <copy todir="${customer.stage.dir}/build-res" file="build-res/subfloor.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}/build-res" file="build-res/subfloor-ee.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}/build-res" file="build-res/subfloor-pkg.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}/build-res" file="build-res/subfloor-gwt.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" file="proguard.pro" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" file="ivy.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" file="package-ivy.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" file="ivysettings.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" file="build.properties" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" file="build.xml" failonerror="no" overwrite="true"/>
+    <copy todir="${customer.stage.dir}" failonerror="no" overwrite="true">
+        <fileset dir="customer-res"/>
+  </copy>
+    
+    <!-- allow any project specific source staging to take place -->
+    <antcall target="customer-src-stage.post"/>
+  </target>
+
+    <!--=======================================================================
+        customer-src-stage.post
+
+        this is called immediately after customer-src-stage
+        ====================================================================-->
+    <target name="customer-src-stage.post"/>
+  
+  <!--=======================================================================
+      customer-src-codechanges
+      
+      modifies the source as necessary for customer source distribution
+      ====================================================================-->
+  <target name="customer-src-codechanges" depends="install-antcontrib,customer-src-stage,install-pentaho-ee-ant-tasks">
+    <!-- remove licensing imports -->
+    <replaceregexp match="import com[.]pentaho[.]commons[.]dsc[.].*?;" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="**/*.java"/>
+    </replaceregexp>
+    
+    <!-- remove multi-line license check declarations -->
+    <replaceregexp match="/[*] START LICENSE CHECK [*]/.*?/[*] END LICENSE CHECK [*]/" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="**/*.java"/>
+    </replaceregexp>
+
+    <!-- remove single line license check code declarations -->
+    <replaceregexp match=".*// LICENSE CHECK" replace="" flags="g">
+      <fileset dir="${customer.stage.dir}" includes="**/*.java"/>
+    </replaceregexp>
+
+    <!-- remove single line license check code declarations -->
+    <replaceregexp match=".*PentahoLicenseVerifier.*" replace="" flags="g">
+      <fileset dir="${customer.stage.dir}" includes="**/*.java"/>
+    </replaceregexp>
+
+    <!-- remove multi-line customer-src-dist sections from XML files -->
+    <replaceregexp match="&lt;!-- begin remove for the customer src dist .*? end remove for the customer src dist --&gt;" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="**/*.xml"/>
+    </replaceregexp>
+    
+    <!-- remove dsc jars from ivy file license check code declarations -->
+    <replaceregexp match=".*dsc.*" replace="" flags="g">
+      <fileset dir="${customer.stage.dir}" includes="ivy.xml"/>
+    </replaceregexp>
+    
+    <!-- remove ee license build.properties declarations -->
+    <replaceregexp match="# subfloor-ee properties.*" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="build.properties"/>
+    </replaceregexp>
+  
+    <!-- remove multi-line customer-src-dist sections from .bat files -->
+    <replaceregexp match="REM START PENTAHO LICENSE.*?REM END PENTAHO LICENSE" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="**/*.bat"/>
+    </replaceregexp>
+    
+    <!-- remove multi-line customer-src-dist sections from .sh files -->
+        <replaceregexp match="# START PENTAHO LICENSE.*?# END PENTAHO LICENSE" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="**/*.sh"/>
+    </replaceregexp>
+    
+    <!-- remove dsc ref from obfuscation lib dir -->
+    <replaceregexp match="\(\!pentaho-ee-dsc-core-\*[.]jar\)" replace="" flags="gs">
+      <fileset dir="${customer.stage.dir}" includes="build-res/subfloor-ee.xml"/>
+    </replaceregexp>        
+    
+    <!-- remove dsc references from plugin.xml -->
+    <replaceregexp match=".*dependency.pentaho-ee-dsc.revision@.*[.]jar&quot;.?/&gt;" replace="" flags="g">
+      <fileset dir="${customer.stage.dir}" includes="**/plugin.xml"/>
+    </replaceregexp>    
+    
+    <!-- remove dsc references from *.pro -->
+    <replaceregexp match=".*\$\{dependency[.]pentaho-ee-dsc[.]revision\}[.]jar" replace="" flags="g">
+      <fileset dir="${customer.stage.dir}" includes="*.pro"/>
+    </replaceregexp>  
+    
+    <!--
+      Important - must have defined customer.id - this is the identifier for the
+      customer. For now, Yahoo is 1, and it's set above...
+    -->
+    <serialverUpdater customerId="${customer.id}">
+      <fileset dir="${customer.stage.dir}" includes="**/*.java" />
+    </serialverUpdater>
+    
+    <!-- allow any project specific source cleansing to take place -->
+  <antcall target="customer-src-codechanges.post"/>
+  </target>
+  
+  <!--=======================================================================
+      customer-src-codechanges.post
+
+      this is called immediately after customer-src-codechanges
+      ====================================================================-->
+  <target name="customer-src-codechanges.post"/>
+  
+  <!--=======================================================================
+      customer-src-dist
+      
+      creates a customer source distribution of this project.
+      ====================================================================-->
+  <target name="customer-src-dist" depends="customer-src-codechanges">
+    <zip destfile="${dist.dir}/${ivy.artifact.id}-customer-src-${project.revision}.zip">
+      <zipfileset dir="${customer.stage.dir}" />
+    </zip>
+  </target>
+  
+  <!--=======================================================================
+      install-serialver-updater-1.0
+  
+      (Fetches and) installs serialveruid updater task
+      ====================================================================-->
+  <target name="install-pentaho-ee-ant-tasks" depends="install-ivy">
+    <if>
+      <istrue value="${serialver.isinstalled}" />
+      <then>
+        <echo message="Skipping Pentaho EE Ant tasks install.  Pentaho EE Ant tasks have already been configured by the build" />
+      </then>
+      <else>
+        <taskdef-with-ivy organisation="pentaho"
+                          module="pentaho-ee-ant-tasks"
+                          revision="1.1.0"
+                          classname="com.pentaho.anttasks.CustomerSerialVerUidTask"
+                          resource="com/pentaho/anttasks/pentaho-anttasks.xml" />
+          <property name="serialver.isinstalled" value="true" />
+      </else>
+    </if>
+  </target>
+
+  <!--=======================================================================
+      compile.compile
+      
+      Override.
+      ====================================================================-->
+  <target name="compile.compile" depends="init,compile.pre.src_copy,compile.pre.src_prepare">
+    <javac destdir="${classes.dir}" debug="${javac.debug}" deprecation="${javac.deprecation}" fork="true"
+      source="${javac.source}" target="${javac.target}">
+      <classpath>
+        <path refid="classpath" />
+      </classpath>
+      <src path="${prepared.src.dir}" />
+    </javac>
+  </target>
+
+  <!--=======================================================================
+      compile.pre.src_copy
+      
+      Copies source to temp folder so that it can be modified before 
+      compilation.
+      ====================================================================-->
+  <target name="compile.pre.src_copy">
+    <delete dir="${prepared.src.dir}" />
+    <mkdir dir="${prepared.src.dir}" />
+    <copy todir="${prepared.src.dir}" flatten="false">
+      <fileset dir="${src.dir}" />
+    </copy>
+  </target>
+  
+  <!--=======================================================================
+      compile.pre.src_prepare
+      
+      Modifies source before compilation.
+      ====================================================================-->
+  <target name="compile.pre.src_prepare" depends="install-pentaho-ee-ant-tasks">
+    <if>
+      <isset property="version.for.license" />
+      <then>
+        <!-- sets a property called version.for.license.obf -->
+        <obfuscateJavaString string="${version.for.license}" property="version.for.license.obf" />
+        <replace file="${prepared.src.dir}/${version.for.license.class}" token="&quot;@VERSION_FOR_LICENSE@&quot;" value="${version.for.license.obf}"/>
+      </then>
+    </if>
+  </target>
+  
+  <!-- TODO: build and test the customer source build, also automate a scan for illegal files / terms / etc -->
+  <!-- TODO: handle obfuscation as an EE customer option or default? -->
+  
+  <!-- end remove for the customer src dist -->
+  
+</project>
