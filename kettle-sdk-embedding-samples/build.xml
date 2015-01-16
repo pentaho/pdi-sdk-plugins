@@ -11,8 +11,8 @@
 	  This build file works with the subfloor.xml file.
 	</description>
 
-	<!-- Import the subfloor-pkg.xml file which contains all the default tasks -->
-	<import file="build-res/subfloor-pkg.xml" />
+	<property name="subfloor-ee.parent.file" value="subfloor-pkg.xml" />
+	<import file="build-res/subfloor-ee.xml" />
 
 	<!--
       AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
