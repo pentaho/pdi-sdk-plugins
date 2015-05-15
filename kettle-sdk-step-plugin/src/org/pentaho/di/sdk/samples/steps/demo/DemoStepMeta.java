@@ -72,7 +72,7 @@ import org.w3c.dom.Node;
 
 @Step(	
 		id = "DemoStep",
-		image = "org/pentaho/di/sdk/samples/steps/demo/resources/icon.png",
+		image = "org/pentaho/di/sdk/samples/steps/demo/resources/demo.svg",
 		i18nPackageName="org.pentaho.di.sdk.samples.steps.demo",
 		name="DemoStep.Name",
 		description = "DemoStep.TooltipDesc",
