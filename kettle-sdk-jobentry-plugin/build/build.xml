@@ -41,7 +41,7 @@
 		<!-- jar things up, also add the properties and icong files -->
 		<copy todir="${classes}">
 			<fileset dir="${src}" includes="**/*.properties" />
-			<fileset dir="${src}" includes="**/*.png" />
+			<fileset dir="${src}" includes="**/*.png,**/*.svg" />
 		</copy>
 
 		<!-- jar class up -->
