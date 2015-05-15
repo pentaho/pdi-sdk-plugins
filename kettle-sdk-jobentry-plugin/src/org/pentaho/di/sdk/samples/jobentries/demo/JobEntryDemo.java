@@ -59,7 +59,7 @@ import org.w3c.dom.Node;
  */
 @JobEntry(	
 		id = "DemoJobEntry",
-		image = "org/pentaho/di/sdk/samples/jobentries/demo/resources/icon.png",
+		image = "org/pentaho/di/sdk/samples/jobentries/demo/resources/demo.svg",
 		i18nPackageName="org.pentaho.di.sdk.samples.jobentries.demo",
 		name="DemoJobEntry.Name",
 		description = "DemoJobEntry.TooltipDesc",
