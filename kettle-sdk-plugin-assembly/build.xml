@@ -48,6 +48,9 @@
               <include name="**/*.zip"/>
         </fileset>
       </unzip>
+    <copy todir="${build.dir}">
+      <fileset dir="${package.resdir}"/>
+    </copy>
   </target>
 
   <target name="package" depends="prepare-artifacts">
