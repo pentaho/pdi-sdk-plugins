@@ -17,6 +17,7 @@
   <property name="build.dir" value="${basedir}/build" />
   <property name="dist.dir" value="${basedir}/dist" />
   <property name="artifact.file.path" value="${dist.dir}/${ivy.artifact.id}-${project.revision}.zip" />
+  <property name="package-res.dir" value="${basedir}/package-res" />
   
   <echo>"${dist.dir}</echo>
   
@@ -48,6 +49,9 @@
               <include name="**/*.zip"/>
         </fileset>
       </unzip>
+      <copy todir="${build.dir}">
+        <fileset dir="${package-res.dir}"/>
+      </copy>
   </target>
 
   <target name="package" depends="prepare-artifacts">
