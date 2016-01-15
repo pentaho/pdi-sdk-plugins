@@ -12,7 +12,7 @@
 	</description>
 
 	<property name="subfloor-ee.parent.file" value="subfloor-pkg.xml" />
-	<import file="build-res/subfloor-ee.xml" />
+	<import file="build-res/subfloor.xml" />
 
 	<!--
       AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
