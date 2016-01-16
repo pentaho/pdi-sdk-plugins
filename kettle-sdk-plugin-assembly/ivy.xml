@@ -14,21 +14,21 @@
   <dependencies defaultconf="default">
   <!-- kettle dependencies -->
   <dependency org="pentaho-kettle" name="kettle-sdk-database-plugin" rev="${project.revision}" transitive="false" changing="true" >
-    <artifact name="kettle-sdk-database-plugin" type="zip" conf="default"/>
-  </dependency> 
-	<dependency org="pentaho-kettle" name="kettle-sdk-step-plugin" rev="${project.revision}" transitive="false" changing="true" >    
-    <artifact name="kettle-sdk-step-plugin" type="zip" conf="default"/>
-  </dependency> 
+    <artifact name="kettle-sdk-database-plugin" type="jar" conf="default"/>
+  </dependency>
+	<dependency org="pentaho-kettle" name="kettle-sdk-step-plugin" rev="${project.revision}" transitive="false" changing="true" >
+    <artifact name="kettle-sdk-step-plugin" type="jar" conf="default"/>
+  </dependency>
 	<dependency org="pentaho-kettle" name="kettle-sdk-partitioner-plugin" rev="${project.revision}" transitive="false" changing="true" >
-    <artifact name="kettle-sdk-partitioner-plugin" type="zip" conf="default"/>
-  </dependency> 
+    <artifact name="kettle-sdk-partitioner-plugin" type="jar" conf="default"/>
+  </dependency>
 	<dependency org="pentaho-kettle" name="kettle-sdk-jobentry-plugin" rev="${project.revision}" transitive="false" changing="true" >
-    <artifact name="kettle-sdk-jobentry-plugin" type="zip" conf="default"/>
-  </dependency> 
+    <artifact name="kettle-sdk-jobentry-plugin" type="jar" conf="default"/>
+  </dependency>
   <dependency org="pentaho-kettle" name="kettle-sdk-embedding-samples" rev="${project.revision}" transitive="false" changing="true" >
-    <artifact name="kettle-sdk-embedding-samples" type="zip" conf="default"/>
-  </dependency> 
+    <artifact name="kettle-sdk-embedding-samples" type="jar" conf="default"/>
+  </dependency>
   </dependencies>
-  
-    
+
+
 </ivy-module>
