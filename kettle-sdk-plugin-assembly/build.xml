@@ -8,8 +8,6 @@
 	 Kettle sdk plugins single assembly.
 	</description>  
 
-	<property name="subfloor-ee.parent.file" value="subfloor-pkg.xml" />
-	<import file="build-res/subfloor.xml" />
 	
   <property file="build.properties" />
 
