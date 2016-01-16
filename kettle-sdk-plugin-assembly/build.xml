@@ -2,15 +2,12 @@
    Unpacks and reassembles the kettle sdk plugins into a single assembly.
    (This build file does not use subfloor.)
 ============================================================================-->
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="kettle-sdk-plugin-assembly" basedir="." default="default"> 
-  
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="kettle-sdk-plugin-assembly" basedir="." default="default">
+
 	<description>
 	 Kettle sdk plugins single assembly.
-	</description>  
+	</description>
 
-	<property name="subfloor-ee.parent.file" value="subfloor-pkg.xml" />
-	<import file="build-res/subfloor.xml" />
-	
   <property file="build.properties" />
 
   <property name="lib.dir" value="${basedir}/lib" />
@@ -18,31 +15,31 @@
   <property name="dist.dir" value="${basedir}/dist" />
   <property name="artifact.file.path" value="${dist.dir}/${ivy.artifact.id}-${project.revision}.zip" />
   <property name="package-res.dir" value="${basedir}/package-res" />
-  
+
   <echo>"${dist.dir}</echo>
-  
+
   <target name="default" depends="package" />
 
   <target name="init-ivy" >
-    <mkdir dir="${dist.dir}" />    
+    <mkdir dir="${dist.dir}" />
           <path id="ivy.lib.path">
               <fileset dir="${user.home}/.subfloor/ivy" includes="*.jar"/>
           </path>
           <taskdef resource="org/apache/ivy/ant/antlib.xml"
           uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
   </target>
-  
+
   <target name="clean">
     <delete dir="${lib.dir}" />
     <delete dir="${build.dir}" />
     <delete dir="${dist.dir}" />
   </target>
-  
-  
+
+
   <target name="resolve" depends="init-ivy">
     <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision].zip" conf="default" />
   </target>
-    
+
   <target name="prepare-artifacts" depends="resolve">
       <unzip dest="${build.dir}">
       <fileset dir="${lib.dir}">
@@ -58,15 +55,15 @@
     <zip destfile="${artifact.file.path}" >
       <zipfileset dir="${basedir}/build" />
     </zip>
-  </target>  
-    
+  </target>
+
 
   <target name="publish-local" depends="package">
     <ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true" warnonmissing="yes" haltonmissing="no">
       <artifacts pattern="${dist.dir}/[artifact]-[revision](-[classifier]).[ext]" />
     </ivy:publish>
   </target>
-    
+
   <!-- Set the os property -->
   <condition property="isLinux">
     <os family="unix" />
@@ -111,7 +108,7 @@
               <arg value="-e" />
             </exec>
    </target>
-  
+
   <!-- Publish target to run the conditional deployment -->
   <target name="publish" depends="publishWindows, publishUnix, init-ivy">
   </target>
