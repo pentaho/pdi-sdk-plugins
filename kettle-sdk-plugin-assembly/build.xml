@@ -43,7 +43,7 @@
   <target name="prepare-artifacts" depends="resolve">
       <unzip dest="${build.dir}">
       <fileset dir="${lib.dir}">
-              <include name="**/*.zip"/>
+              <include name="**/*.jar"/>
         </fileset>
       </unzip>
       <copy todir="${build.dir}">
