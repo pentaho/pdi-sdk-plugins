@@ -11,7 +11,7 @@
 	  This build file works with the subfloor.xml file.
 	</description>
 
-	<property name="subfloor-ee.parent.file" value="subfloor-pkg.xml" />
+	<import file="build-res/subfloor-pkg.xml" />
 	<import file="build-res/subfloor.xml" />
 
 	<!--
