@@ -6,14 +6,15 @@
 	<classpathentry kind="lib" path="lib/kettle-core-@PROJECT-REVISION@.jar"/>
 	<classpathentry kind="lib" path="lib/kettle-engine-@PROJECT-REVISION@.jar"/>
 	<classpathentry kind="lib" path="lib/metastore-@METASTORE-REVISION@.jar"/>
-	<classpathentry kind="lib" path="lib/commons-vfs-20091118-pentaho.jar"/>
+	<classpathentry kind="lib" path="lib/commons-vfs2-2.1-20150824.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-api-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/scannotation-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/javassist-3.12.1.GA.jar"/>
 	<classpathentry kind="lib" path="lib/esapi-2.0.1.jar"/>
 	<classpathentry kind="lib" path="resources"/>
-	<classpathentry kind="output" path="bin"/>	
+	<classpathentry kind="output" path="bin"/>
 </classpath>
