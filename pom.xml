@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.pentaho</groupId>
+    <artifactId>pentaho-ce-jar-parent-pom</artifactId>
+    <version>1.1.9</version>
+  </parent>
+
+  <groupId>pentaho-kettle</groupId>
+  <artifactId>kettle-sdk-plugin-assembly</artifactId>
+  <version>7.0-SNAPSHOT</version>
+  <name>Pentaho Data Integration SDK Plugin Assembly</name>
+  <packaging>pom</packaging>
+
+  <repositories>
+    <repository>
+      <id>Pentaho Artifactory</id>
+      <url>http://repo.pentaho.org/artifactory/repo</url>
+    </repository>
+  </repositories>
+
+  <modules>
+    <module>kettle-sdk-database-plugin</module>
+    <module>kettle-sdk-embedding-samples</module>
+    <module>kettle-sdk-jobentry-plugin</module>
+    <module>kettle-sdk-partitioner-plugin</module>
+    <module>kettle-sdk-step-plugin</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}</finalName>
+              <descriptors>
+                <descriptor>assembly/assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

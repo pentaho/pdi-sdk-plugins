@@ -4,6 +4,7 @@ js-lib/
 lib/
 test-lib/
 eclipse-bin/
+target/
 override.properties
 testdata.log
 testdata.properties
