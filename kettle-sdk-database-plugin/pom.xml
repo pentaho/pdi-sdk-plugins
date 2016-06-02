@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.pentaho</groupId>
+    <artifactId>pentaho-ce-jar-parent-pom</artifactId>
+    <version>1.1.9</version>
+  </parent>
+
+  <groupId>pentaho-kettle</groupId>
+  <artifactId>kettle-sdk-database-plugin</artifactId>
+  <version>7.0-SNAPSHOT</version>
+  <name>Pentaho Data Integration SDK Database Plugin</name>
+  <packaging>jar</packaging>
+
+  <properties>
+    <dependency.kettle.version>7.0-SNAPSHOT</dependency.kettle.version>
+    <csvjdbc.version>1.0.29</csvjdbc.version>
+    <junit.version>4.12</junit.version>
+    <mockito.version>1.10.19</mockito.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>Pentaho Artifactory</id>
+      <url>http://repo.pentaho.org/artifactory/repo</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}</finalName>
+              <descriptors>
+                <descriptor>src/main/assembly/assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-core</artifactId>
+      <version>${dependency.kettle.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.csvjdbc</groupId>
+      <artifactId>csvjdbc</artifactId>
+      <version>${csvjdbc.version}</version>
+      <!-- Compile scope is used here to simplify demonstrating this sample.
+           In real-world implementations, "provided" scope should be used,
+           and the JDBC driver should be placed in the lib directory.
+           
+           This allows end-users to update the JDBC driver when needed,
+           without rebuilding the plugin. -->
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
