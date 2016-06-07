@@ -35,9 +35,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.annotations.Step;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleStepException;
@@ -55,6 +57,11 @@ import org.pentaho.di.trans.steps.loadsave.LoadSaveTester;
 import org.pentaho.di.trans.steps.loadsave.MemoryRepository;
 
 public class DemoStepMetaTest {
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws KettleException {
+    KettleEnvironment.init( false );
+  }
 
   @Test
   public void testGetStepData() {
