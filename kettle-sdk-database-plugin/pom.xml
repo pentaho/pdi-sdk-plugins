@@ -15,7 +15,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <dependency.kettle.version>7.0-SNAPSHOT</dependency.kettle.version>
+    <dependency.kettle.revision>7.0-SNAPSHOT</dependency.kettle.revision>
     <csvjdbc.version>1.0.29</csvjdbc.version>
     <junit.version>4.12</junit.version>
     <mockito.version>1.10.19</mockito.version>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${dependency.kettle.version}</version>
+      <version>${dependency.kettle.revision}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

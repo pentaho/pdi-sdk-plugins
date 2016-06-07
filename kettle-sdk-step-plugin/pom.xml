@@ -15,8 +15,8 @@
   <packaging>jar</packaging>
 
   <properties>
-    <dependency.kettle.version>7.0-SNAPSHOT</dependency.kettle.version>
-    <dependency.pentaho-metadata.version>7.0-SNAPSHOT</dependency.pentaho-metadata.version>
+    <dependency.kettle.revision>7.0-SNAPSHOT</dependency.kettle.revision>
+    <dependency.pentaho-metadata.revision>7.0-SNAPSHOT</dependency.pentaho-metadata.revision>
     <junit.version>4.12</junit.version>
     <mockito.version>1.10.19</mockito.version>
   </properties>
@@ -55,31 +55,31 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-metadata</artifactId>
-      <version>${dependency.pentaho-metadata.version}</version>
+      <version>${dependency.pentaho-metadata.revision}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${dependency.kettle.version}</version>
+      <version>${dependency.kettle.revision}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${dependency.kettle.version}</version>
+      <version>${dependency.kettle.revision}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
-      <version>${dependency.kettle.version}</version>
+      <version>${dependency.kettle.revision}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine-test</artifactId>
-      <version>${dependency.kettle.version}</version>
+      <version>${dependency.kettle.revision}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
