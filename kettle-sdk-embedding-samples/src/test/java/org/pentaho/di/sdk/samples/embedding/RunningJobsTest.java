@@ -46,6 +46,17 @@ public class RunningJobsTest {
 		// run a transformation from the file system
 		Job j = instance.runJobFromFileSystem( "etl/parameterized_job.kjb" );
 
+		for ( int i = 0; i < 20; i++ ) {
+		  if ( j.getStatus().equals( "Finished" ) ) {
+		    break;
+		  }
+		  try {
+        Thread.sleep( 100 );
+      } catch ( InterruptedException e ) {
+        // Ignore
+      }
+		}
+
 		// A successfully completed job is in finished state
 		assertEquals( "Finished", j.getStatus() );
 
