@@ -24,6 +24,7 @@ package org.pentaho.di.sdk.samples.carte;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,12 +51,12 @@ public abstract class BaseCarteServletTest {
 
   /**
    * Returns a free port number on localhost.
-   * 
+   *
    * Heavily inspired from org.eclipse.jdt.launching.SocketUtil (to avoid a dependency to JDT just because of this).
    * Slightly improved with close() missing in JDT. And throws exception instead of returning -1.
-   * 
+   *
    * https://gist.github.com/vorburger/3429822
-   * 
+   *
    * @return a free port number on localhost
    * @throws IllegalStateException if unable to find a free port
    */
@@ -71,7 +72,7 @@ public abstract class BaseCarteServletTest {
         // Ignore IOException on close()
       }
       return port;
-    } catch ( IOException e ) { 
+    } catch ( IOException e ) {
     } finally {
       if ( socket != null ) {
         try {
@@ -83,20 +84,50 @@ public abstract class BaseCarteServletTest {
     throw new IllegalStateException( "Could not find a free TCP/IP port to start embedded Jetty HTTP Server on" );
   }
 
+  public static boolean serverReady(String host, String port) {
+    boolean result = false;
+    Socket s = null;
+    try {
+      s = new Socket(host, Integer.valueOf( port ) );
+      result = true;
+    } catch (Exception e) {
+      result = false;
+    } finally {
+      if( s != null ) {
+        try {
+          s.close();
+        } catch ( Exception e ) {
+          // Ignore
+        }
+      }
+    }
+    return result;
+  }
+
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     carteConfig = getSlaveServerConfig();
     carteThread = new Thread() {
+      @Override
       public void run() {
         try {
           Carte.runCarte( carteConfig );
         } catch ( Exception e ) {
+          System.out.println( e );
           System.exit( 0 );
         }
       }
     };
     carteThread.start();
     System.out.println( "Started local Carte server on port " + port );
+
+    // Allow up to 2 seconds for Carte to become available
+    for ( int i = 0; i < 20; i++ ) {
+      if ( serverReady( hostname, port ) ) {
+        break;
+      }
+      Thread.sleep( 100 );
+    }
   }
 
   @SuppressWarnings( "deprecation" )
