@@ -21,3 +21,5 @@ build-res/module-scripts/
 *.war
 *.ear
 *.iml
+*.prefs
+*.classpath
