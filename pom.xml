@@ -9,9 +9,9 @@
   </parent>
 
   <groupId>pentaho-kettle</groupId>
-  <artifactId>kettle-sdk-plugin-assembly</artifactId>
+  <artifactId>kettle-sdk-plugin-parent</artifactId>
   <version>7.0-SNAPSHOT</version>
-  <name>Pentaho Data Integration SDK Plugin Assembly</name>
+  <name>Pentaho Data Integration SDK Parent POM</name>
   <packaging>pom</packaging>
 
   <repositories>
@@ -21,34 +21,20 @@
     </repository>
   </repositories>
 
-  <modules>
-    <module>kettle-sdk-database-plugin</module>
-    <module>kettle-sdk-embedding-samples</module>
-    <module>kettle-sdk-jobentry-plugin</module>
-    <module>kettle-sdk-partitioner-plugin</module>
-    <module>kettle-sdk-step-plugin</module>
-  </modules>
+  <properties>
+    <dependency.kettle.revision>7.0-SNAPSHOT</dependency.kettle.revision>
+    <dependency.pentaho-metadata.revision>7.0-SNAPSHOT</dependency.pentaho-metadata.revision>
+    <junit.version>4.12</junit.version>
+    <mockito.version>1.10.19</mockito.version>
+    <eula.wrap.phase/>
+  </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>distro-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>assembly/assembly.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <modules>
+  	<module>kettle-sdk-database-plugin</module>
+  	<module>kettle-sdk-embedding-samples</module>
+  	<module>kettle-sdk-jobentry-plugin</module>
+  	<module>kettle-sdk-partitioner-plugin</module>
+  	<module>kettle-sdk-step-plugin</module>
+  	<module>kettle-sdk-plugin-assembly</module>
+  </modules>
 </project>
