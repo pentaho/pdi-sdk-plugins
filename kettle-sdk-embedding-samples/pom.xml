@@ -13,7 +13,8 @@
   <packaging>jar</packaging>
 
   <properties>
-    <jersey.version>1.16</jersey.version>
+    <jersey.version>1.19.1</jersey.version>
+    <jsr311-api.version>1.1.1</jsr311-api.version>
   </properties>
 
   <dependencies>
@@ -85,6 +86,12 @@
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-bundle</artifactId>
       <version>${jersey.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>jsr311-api</artifactId>
+      <version>${jsr311-api.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
