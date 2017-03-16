@@ -7,11 +7,14 @@
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
     <version>7.1-SNAPSHOT</version>
   </parent>
+  
   <groupId>pentaho-kettle</groupId>
   <artifactId>kettle-sdk-plugin-parent</artifactId>
   <version>7.1-SNAPSHOT</version>
   <packaging>pom</packaging>
+  
   <name>Pentaho Data Integration SDK Parent POM</name>
+  
   <modules>
     <module>kettle-sdk-database-plugin</module>
     <module>kettle-sdk-embedding-samples</module>
@@ -20,17 +23,17 @@
     <module>kettle-sdk-step-plugin</module>
     <module>kettle-sdk-plugin-assembly</module>
   </modules>
+  
   <properties>
+    <eula-wrap_assign-deps-to-properties-phase/>
+    <eula-wrap_create-izpack-installer-jar-phase/>
+    <eula-wrap_create-dist-phase/>
+    <eula-wrap_attach-dist-phase/>
+  
     <mockito.version>1.10.19</mockito.version>
     <dependency.pentaho-metadata.revision>7.1-SNAPSHOT</dependency.pentaho-metadata.revision>
-    <eula.wrap.phase></eula.wrap.phase>
     <dependency.kettle.revision>7.1-SNAPSHOT</dependency.kettle.revision>
     <junit.version>4.12</junit.version>
   </properties>
-  <repositories>
-    <repository>
-      <id>Pentaho Public Release Repo</id>
-      <url>http://nexus.pentaho.org/content/groups/omni</url>
-    </repository>
-  </repositories>
+  
 </project>
