@@ -46,7 +46,8 @@ public class RunningTransformationsTest {
 		Trans t = instance.runTransformationFromFileSystem( "etl/parameterized_transformation.ktr" );
 
 		// A successfully completed transformation is in waiting state
-		assertEquals( "Waiting", t.getStatus() );
+		//assertEquals( "Waiting", t.getStatus() );
+		assertEquals( "Finished", t.getStatus() );
 
 		// A successfully completed transformation has no errors
 		assertEquals( 0, t.getResult().getNrErrors() );
