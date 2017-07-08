@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Pentaho : http://www.pentaho.com
+ * Copyright (C) 2002-2016 by Pentaho : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -23,40 +23,36 @@
 package org.pentaho.di.sdk.samples.carte;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.message.BasicHeader;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.HttpClientManager;
-import org.pentaho.di.core.util.HttpClientUtil;
 import org.pentaho.di.www.ExecuteTransServlet;
 
-public class ExecuteTransSample extends AbstractSample {
+public class ExecuteTransSample {
 
   public static void main( String[] args ) throws Exception {
     if ( args.length < 8 ) {
       System.out.println( " You must specify the following parameters Carte_host Carte_port "
-        + "Carte_login Carte_password di_repository_id di_repository_username di_repository_password "
-        + "full_trans_path [log_level]" );
+          + "Carte_login Carte_password di_repository_id di_repository_username di_repository_password "
+          + "full_trans_path [log_level]" );
       System.out.println( " For example 127.0.0.1 8088 cluster cluster di user password home/admin/my_trans " );
       System.exit( 1 );
     }
-    init( args[ 0 ], Integer.parseInt( args[ 1 ] ), args[ 2 ], args[ 3 ] );
     // building target url
-    String logLevel = ( args.length > 8 ) ? args[ 8 ] : "Debug";
-    String serviceAndArguments = "/?rep=" + args[ 4 ] + "&user=" + args[ 5 ] + "&pass="
-      + args[ 6 ] + "&trans=" + args[ 7 ] + "&level=" + logLevel;
+    String realHostname = args[0];
+    String port = args[1];
+    String logLevel = ( args.length > 8 ) ? args[8] : "Debug";
+    String serviceAndArguments = "/?rep=" + args[4] + "&user=" + args[5] + "&pass="
+        + args[6] + "&trans=" + args[7] + "&level=" + logLevel;
 
     serviceAndArguments = Const.replace( serviceAndArguments, " ", "%20" );
     serviceAndArguments = Const.replace( serviceAndArguments, "/", "%2F" );
 
-    String urlString = "http://" + host + ":" + port + ExecuteTransServlet.CONTEXT_PATH + serviceAndArguments;
+    String urlString = "http://" + realHostname + ":" + port + ExecuteTransServlet.CONTEXT_PATH + serviceAndArguments;
 
     //building auth token
-    String plainAuth = args[ 2 ] + ":" + args[ 3 ];
+    String plainAuth = args[2] + ":" + args[3];
     String auth = "Basic " + Base64.encodeBase64String( plainAuth.getBytes() );
 
     //adding binary to servlet
@@ -64,21 +60,20 @@ public class ExecuteTransSample extends AbstractSample {
   }
 
   public static void sendExecuteRequest( String urlString, String authentication ) throws Exception {
-    HttpGet method = new HttpGet( urlString );
-    HttpClientContext context = HttpClientUtil.createPreemptiveBasicAuthentication( host, port, user, password );
-    method.addHeader( new BasicHeader( "Content-Type", "text/xml;charset=UTF-8" ) );
+    GetMethod method = new GetMethod( urlString );
+    method.setDoAuthentication( true );
+    method.addRequestHeader( new Header( "Content-Type", "text/xml;charset=UTF-8" ) );
     //adding authorization token
     if ( authentication != null ) {
-      method.addHeader( new BasicHeader( "Authorization", authentication ) );
+      method.addRequestHeader( new Header( "Authorization", authentication ) );
     }
 
     //executing method
-    HttpClient client = HttpClientManager.getInstance().createDefaultClient();
-    HttpResponse httpResponse = context != null ? client.execute( method, context ) : client.execute( method );
-    int code = httpResponse.getStatusLine().getStatusCode();
-    String response = HttpClientUtil.responseToString( httpResponse );
+    HttpClient client = new HttpClient(  );
+    int code = client.executeMethod( method );
+    String response = method.getResponseBodyAsString();
     method.releaseConnection();
-    if ( code >= HttpStatus.SC_BAD_REQUEST ) {
+    if ( code >= 400 ) {
       System.out.println( "Error occurred during transformation execution." );
     }
     System.out.println( "Server response (expected to be empty):" );

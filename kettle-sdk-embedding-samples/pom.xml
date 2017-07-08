@@ -24,21 +24,12 @@
           <artifactId>xercesImpl</artifactId>
           <groupId>xerces</groupId>
         </exclusion>
-        <exclusion>
-          <artifactId>commons-httpclient</artifactId>
-          <groupId>commons-httpclient</groupId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
       <version>${dependency.kettle.revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.3</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
