@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2016 by Pentaho : http://www.pentaho.com
+ * Copyright (C) 2002-2017 by Pentaho : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -23,33 +23,39 @@
 package org.pentaho.di.sdk.samples.carte;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.message.BasicHeader;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.util.HttpClientManager;
+import org.pentaho.di.core.util.HttpClientUtil;
 import org.pentaho.di.job.JobConfiguration;
 import org.pentaho.di.job.JobExecutionConfiguration;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.www.RegisterJobServlet;
 
-public class RegisterJobSample {
+public class RegisterJobSample extends AbstractSample {
 
   public static void main( String[] args ) throws Exception {
     if ( args.length != 5 ) {
       System.out.println( " You must specify the following parameters Carte_host Carte_port "
-          + "Carte_login Carte_password path_to_job" );
+        + "Carte_login Carte_password path_to_job" );
       System.out.println( " For example 127.0.0.1 8088 cluster cluster d:\\work\\dummy-job.kjb " );
       System.exit( 1 );
     }
+    init( args[ 0 ], Integer.parseInt( args[ 1 ] ), args[ 2 ], args[ 3 ] );
     // building target url
-    String urlString = getUrlString( args[0], args[1] );
+    String urlString = getUrlString( args[ 0 ], args[ 1 ] );
 
     //building auth token
-    String auth = getAuthString( args[2], args[3] );
+    String auth = getAuthString( args[ 2 ], args[ 3 ] );
 
     //adding binary to servlet
-    String response = addJobToServlet( urlString, buildJobConfig( args[4] ), auth );
+    String response = addJobToServlet( urlString, buildJobConfig( args[ 4 ] ), auth );
 
     if ( response != null ) {
       System.out.println( "Server response:" );
@@ -67,21 +73,22 @@ public class RegisterJobSample {
   }
 
   public static String addJobToServlet( String urlString, String xml, String authentication ) throws Exception {
-    PostMethod method = new PostMethod( urlString );
-    method.setRequestEntity( new ByteArrayRequestEntity( xml.getBytes( "UTF-8" ) ) );
-    method.setDoAuthentication( true );
-    method.addRequestHeader( new Header( "Content-Type", "text/xml;charset=UTF-8" ) );
+    HttpPost method = new HttpPost( urlString );
+    method.setEntity( new ByteArrayEntity( xml.getBytes( "UTF-8" ) ) );
+    HttpClientContext context = HttpClientUtil.createPreemptiveBasicAuthentication( host, port, user, password );
+    method.addHeader( new BasicHeader( "Content-Type", "text/xml;charset=UTF-8" ) );
     //adding authorization token
     if ( authentication != null ) {
-      method.addRequestHeader( new Header( "Authorization", authentication ) );
+      method.addHeader( new BasicHeader( "Authorization", authentication ) );
     }
 
     //executing method
-    HttpClient client = new HttpClient(  );
-    int code = client.executeMethod( method );
-    String response = method.getResponseBodyAsString();
+    HttpClient client = HttpClientManager.getInstance().createDefaultClient();
+    HttpResponse httpResponse = context != null ? client.execute( method, context ) : client.execute( method );
+    int code = httpResponse.getStatusLine().getStatusCode();
+    String response = HttpClientUtil.responseToString( httpResponse );
     method.releaseConnection();
-    if ( code >= 400 ) {
+    if ( code >= HttpStatus.SC_BAD_REQUEST ) {
       System.out.println( "Error occurred during job submission." );
       return null;
     }

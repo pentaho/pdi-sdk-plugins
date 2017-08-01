@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2016 by Pentaho : http://www.pentaho.com
+ * Copyright (C) 2002-2017 by Pentaho : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -23,26 +23,32 @@
 package org.pentaho.di.sdk.samples.carte;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.message.BasicHeader;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.util.HttpClientManager;
+import org.pentaho.di.core.util.HttpClientUtil;
 import org.pentaho.di.www.NextSequenceValueServlet;
 
-public class NextSequenceSample {
+public class NextSequenceSample extends AbstractSample {
 
   public static void main( String[] args ) throws Exception {
     if ( args.length < 5 ) {
       System.out.println( " You must specify the following parameters Carte_host Carte_port "
-          + "Carte_login Carte_password job_name" );
+        + "Carte_login Carte_password job_name" );
       System.out.println( " For example 127.0.0.1 8088 cluster cluster my_sequense" );
       System.exit( 1 );
     }
+    init( args[ 0 ], Integer.parseInt( args[ 1 ] ), args[ 2 ], args[ 3 ] );
     // building target url
-    String urlString = getUrlString( args[0], args[1], args[4] );
+    String urlString = getUrlString( args[ 0 ], args[ 1 ], args[ 4 ] );
 
     //building auth token
-    String auth = getAuthString( args[2], args[3] );
+    String auth = getAuthString( args[ 2 ], args[ 3 ] );
 
     //adding binary to servlet
     String response = sendNextSequenceRequest( urlString, auth );
@@ -53,19 +59,20 @@ public class NextSequenceSample {
   }
 
   public static String sendNextSequenceRequest( String urlString, String authentication ) throws Exception {
-    GetMethod method = new GetMethod( urlString );
-    method.setDoAuthentication( true );
+    HttpGet method = new HttpGet( urlString );
+    HttpClientContext context = HttpClientUtil.createPreemptiveBasicAuthentication( host, port, user, password );
     //adding authorization token
     if ( authentication != null ) {
-      method.addRequestHeader( new Header( "Authorization", authentication ) );
+      method.addHeader( new BasicHeader( "Authorization", authentication ) );
     }
 
     //executing method
-    HttpClient client = new HttpClient(  );
-    int code = client.executeMethod( method );
-    String response = method.getResponseBodyAsString();
+    HttpClient client = HttpClientManager.getInstance().createDefaultClient();
+    HttpResponse httpResponse = context != null ? client.execute( method, context ) : client.execute( method );
+    int code = httpResponse.getStatusLine().getStatusCode();
+    String response = HttpClientUtil.responseToString( httpResponse );
     method.releaseConnection();
-    if ( code >= 400 ) {
+    if ( code >= HttpStatus.SC_BAD_REQUEST ) {
       System.out.println( "Error occurred during sequense allocation. "
         + "Most probably you don't have the sequence configured for your Carte server." );
       return null;
