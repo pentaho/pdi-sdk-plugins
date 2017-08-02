@@ -22,16 +22,7 @@
 
 package org.pentaho.di.sdk.samples.carte;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.message.BasicHeader;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.HttpClientManager;
-import org.pentaho.di.core.util.HttpClientUtil;
 import org.pentaho.di.www.GetJobStatusServlet;
 
 public class GetJobStatusSample extends AbstractSample {
@@ -59,24 +50,8 @@ public class GetJobStatusSample extends AbstractSample {
   }
 
   public static String sendGetJobStatusRequest( String urlString, String authentication ) throws Exception {
-    HttpGet method = new HttpGet( urlString );
-    HttpClientContext context = HttpClientUtil.createPreemptiveBasicAuthentication( host, port, user, password );
-    //adding authorization token
-    if ( authentication != null ) {
-      method.addHeader( new BasicHeader( "Authorization", authentication ) );
-    }
-
-    //executing method
-    HttpClient client = HttpClientManager.getInstance().createDefaultClient();
-    HttpResponse httpResponse = context != null ? client.execute( method, context ) : client.execute( method );
-    int code = httpResponse.getStatusLine().getStatusCode();
-    String response = HttpClientUtil.responseToString( httpResponse );
-    method.releaseConnection();
-    if ( code >= HttpStatus.SC_BAD_REQUEST ) {
-      System.out.println( "Error occurred during getting job status." );
-      return null;
-    }
-    return response;
+    String message = "Error occurred during getting job status.";
+    return sendGetStatusRequest( urlString, host, port, user, password, message );
   }
 
   public static String getUrlString( String realHostname, String port, String job_name ) {
@@ -84,11 +59,5 @@ public class GetJobStatusSample extends AbstractSample {
       + GetJobStatusServlet.CONTEXT_PATH + "/?xml=Y&name=" + job_name;
     urlString = Const.replace( urlString, " ", "%20" );
     return urlString;
-  }
-
-  public static String getAuthString( String user, String pass ) {
-    String plainAuth = user + ":" + pass;
-    String auth = "Basic " + Base64.encodeBase64String( plainAuth.getBytes() );
-    return auth;
   }
 }

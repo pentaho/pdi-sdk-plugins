@@ -2,7 +2,7 @@
 *
 * Pentaho Data Integration
 *
-* Copyright (C) 2002-2016 by Pentaho : http://www.pentaho.com
+* Copyright (C) 2002-2017 by Pentaho : http://www.pentaho.com
 *
 *******************************************************************************
 *
@@ -22,20 +22,14 @@
 
 package org.pentaho.di.sdk.samples.carte;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.UUID;
-
 import org.junit.Test;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.w3c.dom.Node;
+
+import java.util.UUID;
+
+import static org.junit.Assert.*;
 
 public class JobServletsTest extends BaseCarteServletTest {
 
@@ -62,10 +56,12 @@ public class JobServletsTest extends BaseCarteServletTest {
     } catch ( IllegalArgumentException iae ) {
       fail();
     }
+    Integer iPort = new Integer( port );
 
     // Carte Status
     String serverStatusUrl = GetStatusSample.getUrlString( hostname, port );
-    response = GetStatusSample.sendGetStatusRequest( serverStatusUrl, auth );
+    response = GetStatusSample.sendGetStatusRequest(
+            serverStatusUrl, hostname, iPort, CARTE_USERNAME, CARTE_PASSWORD );
     assertNotNull( response );
     result = XMLHandler.getSubNode( XMLHandler.loadXMLString( response ), "serverstatus" );
     result = XMLHandler.getSubNode( result, "jobstatuslist" );
@@ -80,7 +76,8 @@ public class JobServletsTest extends BaseCarteServletTest {
 
     // Job Status
     String jobStatusUrl = GetJobStatusSample.getUrlString( hostname, port, jobName );
-    response = GetJobStatusSample.sendGetJobStatusRequest( jobStatusUrl, auth );
+    response = GetJobStatusSample.sendGetStatusRequest(
+            jobStatusUrl, hostname, iPort, CARTE_USERNAME, CARTE_PASSWORD );
     assertNotNull( response );
     result = XMLHandler.getSubNode( XMLHandler.loadXMLString( response ), "jobstatus" );
     assertEquals( jobName, XMLHandler.getTagValue( result, "jobname" ) );
@@ -94,7 +91,8 @@ public class JobServletsTest extends BaseCarteServletTest {
     String fakeJobName = UUID.randomUUID().toString();
     assertNotEquals( "The fake job name should not match the real job used for testing", jobName, fakeJobName );
     jobStatusUrl = GetJobStatusSample.getUrlString( hostname, port, fakeJobName );
-    response = GetJobStatusSample.sendGetJobStatusRequest( jobStatusUrl, auth );
+    response = GetJobStatusSample.sendGetStatusRequest(
+            jobStatusUrl, hostname, iPort, CARTE_USERNAME, CARTE_PASSWORD );
     assertNotNull( response );
     result = XMLHandler.getSubNode( XMLHandler.loadXMLString( response ), "webresult" );
     assertEquals( "ERROR", XMLHandler.getTagValue( result, "result" ) );
@@ -105,7 +103,8 @@ public class JobServletsTest extends BaseCarteServletTest {
 
     // Start Job
     String jobStartUrl = StartJobSample.getUrlString( hostname, port, jobName );
-    response = StartJobSample.sendStartJobRequest( jobStartUrl, auth );
+    response = StartJobSample.sendGetStatusRequest(
+            jobStartUrl, hostname, iPort, CARTE_USERNAME, CARTE_PASSWORD );
     assertNotNull( response );
     result = XMLHandler.getSubNode( XMLHandler.loadXMLString( response ), "webresult" );
     assertEquals( "OK", XMLHandler.getTagValue( result, "result" ) );
@@ -116,7 +115,8 @@ public class JobServletsTest extends BaseCarteServletTest {
 
     // Job Status
     jobStatusUrl = GetJobStatusSample.getUrlString( hostname, port, jobName );
-    response = GetJobStatusSample.sendGetJobStatusRequest( jobStatusUrl, auth );
+    response = GetJobStatusSample.sendGetStatusRequest(
+            jobStatusUrl, hostname, iPort, CARTE_USERNAME, CARTE_PASSWORD );
     assertNotNull( response );
     result = XMLHandler.getSubNode( XMLHandler.loadXMLString( response ), "jobstatus" );
     assertEquals( jobName, XMLHandler.getTagValue( result, "jobname" ) );
@@ -125,7 +125,8 @@ public class JobServletsTest extends BaseCarteServletTest {
 
     // Remove Job
     String jobRemoveUrl = RemoveJobSample.getUrlString( hostname, port, jobName );
-    response = RemoveJobSample.sendRemoveJobRequest( jobRemoveUrl, auth );
+    response = RemoveJobSample.sendGetStatusRequest(
+            jobRemoveUrl, hostname, iPort, CARTE_USERNAME, CARTE_PASSWORD );
     assertNotNull( response );
     result = XMLHandler.getSubNode( XMLHandler.loadXMLString( response ), "webresult" );
     assertEquals( "OK", XMLHandler.getTagValue( result, "result" ) );
