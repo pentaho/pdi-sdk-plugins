@@ -106,4 +106,30 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-plugins</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>plugins</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.pentaho.di.plugins</groupId>
+                  <artifactId>pdi-core-plugins-impl</artifactId>
+                  <overWrite>true</overWrite>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
