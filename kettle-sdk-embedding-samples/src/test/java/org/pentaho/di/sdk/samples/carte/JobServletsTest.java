@@ -114,6 +114,8 @@ public class JobServletsTest extends BaseCarteServletTest {
     assertTrue( XMLHandler.getTagValue( result, "message" ).contains( jobName ) );
     assertTrue( XMLHandler.getTagValue( result, "message" ).contains( "was started." ) );
 
+    Thread.sleep( 500 );
+
     // Job Status
     jobStatusUrl = GetJobStatusSample.getUrlString( hostname, port, jobName );
     response = GetJobStatusSample.sendGetJobStatusRequest( jobStatusUrl, auth );
