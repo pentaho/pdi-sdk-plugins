@@ -18,7 +18,7 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${dependency.kettle.revision}</version>
+      <version>${pdi.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>xercesImpl</artifactId>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${dependency.kettle.revision}</version>
+      <version>${pdi.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
