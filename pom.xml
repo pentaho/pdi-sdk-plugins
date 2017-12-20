@@ -24,9 +24,10 @@
     <eula-wrap_create-dist-phase></eula-wrap_create-dist-phase>
     <eula-wrap_assign-deps-to-properties-phase></eula-wrap_assign-deps-to-properties-phase>
     <mockito.version>1.10.19</mockito.version>
-    <pentaho-metadata.version>8.1.0.0-SNAPSHOT</pentaho-metadata.version>
+    <pentaho-metadata.version>${project.version}</pentaho-metadata.version>
     <eula-wrap_create-izpack-installer-jar-phase></eula-wrap_create-izpack-installer-jar-phase>
-    <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
+    <pdi.version>${project.version}</pdi.version>
+    <platform.version>${project.version}</platform.version>
     <eula-wrap_attach-dist-phase></eula-wrap_attach-dist-phase>
     <junit.version>4.12</junit.version>
   </properties>

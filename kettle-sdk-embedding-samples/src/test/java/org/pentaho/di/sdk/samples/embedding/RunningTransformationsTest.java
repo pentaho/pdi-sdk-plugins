@@ -22,13 +22,14 @@
 
 package org.pentaho.di.sdk.samples.embedding;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.Trans;
+
+import static org.junit.Assert.assertEquals;
 
 public class RunningTransformationsTest {
 
@@ -37,13 +38,24 @@ public class RunningTransformationsTest {
     KettleEnvironment.init( false );
   }
 
+	@AfterClass
+	public static void tearDownAfterClass() throws KettleException {
+		KettleEnvironment.shutdown();
+	}
+
   @Test
 	public void testRunningTransformations() throws KettleException {
+  	for ( final String transPath : RunningTransformations.SAMPLE_TRANSFORMATIONS ) {
+			testRunningTransformationsImpl( transPath );
+		}
+	}
+
+	private void testRunningTransformationsImpl( final String transPath ) throws KettleException {
 		// Create an instance of this demo class for convenience
 		RunningTransformations instance = new RunningTransformations();
 
 		// run a transformation from the file system
-		Trans t = instance.runTransformationFromFileSystem( "etl/parameterized_transformation.ktr" );
+		Trans t = instance.runTransformationFromFileSystem( transPath );
 
 		// A successfully completed transformation is in waiting state
 		assertEquals( "Finished", t.getStatus() );

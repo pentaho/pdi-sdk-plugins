@@ -47,6 +47,10 @@ import org.pentaho.di.trans.TransMeta;
  */
 public class RunningTransformations {
 
+  static final String[] SAMPLE_TRANSFORMATIONS = new String[]{
+    "etl/parameterized_transformation.ktr",
+    "etl/inject_metadata_transformation.ktr" };
+
   public static RunningTransformations instance;
 
   /**
@@ -63,32 +67,43 @@ public class RunningTransformations {
       return;
     }
 
-    // Create an instance of this demo class for convenience
-    instance = new RunningTransformations();
+    try {
+      // Create an instance of this demo class for convenience
+      instance = new RunningTransformations();
 
-    // run a transformation from the file system
-    Trans trans = instance.runTransformationFromFileSystem( "etl/parametrized_transformation.ktr" );
+      for ( final String transPath : SAMPLE_TRANSFORMATIONS ) {
+        // run a transformation from the file system
+        Trans trans = instance.runTransformationFromFileSystem( transPath );
 
-    // retrieve logging appender
-    LoggingBuffer appender = KettleLogStore.getAppender();
-    // retrieve logging lines for job
-    String logText = appender.getBuffer( trans.getLogChannelId(), false ).toString();
+        // retrieve logging appender
+        LoggingBuffer appender = KettleLogStore.getAppender();
+        // retrieve logging lines for job
+        String logText = appender.getBuffer( trans.getLogChannelId(), false ).toString();
 
-    // report on logged lines
-    System.out.println( "************************************************************************************************" );
-    System.out.println( "LOG REPORT: Transformation generated the following log lines:\n" );
-    System.out.println( logText );
-    System.out.println( "END OF LOG REPORT" );
-    System.out.println( "************************************************************************************************" );
+        // report on logged lines
+        System.out
+          .println(
+            "************************************************************************************************" );
+        System.out.println( String.format( "LOG REPORT: Transformation '%s' generated the following log lines:\n",
+          transPath ) );
+        System.out.println( logText );
+        System.out.println( "END OF LOG REPORT" );
+        System.out
+          .println( "************************************************************************************************\n"
+            + "" );
 
+        // run a transformation from the repository
+        // NOTE: before running the repository example, you need to make sure that the
+        // repository and transformation exist, and can be accessed by the user and password used
+        // uncomment and run after you've got a test repository in place
 
-    // run a transformation from the repository
-    // NOTE: before running the repository example, you need to make sure that the 
-    // repository and transformation exist, and can be accessed by the user and password used
-    // uncomment and run after you've got a test repository in place
-
-    // instance.runTransformationFromRepository("test-repository", "/home/joe", "parametrized_transformation", "joe", "password");
-
+        //String[] path = Const.splitPath( transPath, "/" );
+        //String transName = path[path.length - 1].replace( ".ktr", "" );
+        // instance.runTransformationFromRepository("test-repository", "/home/joe", transName, "joe", "password");
+      }
+    } finally {
+      KettleEnvironment.shutdown();
+    }
   }
 
   /**
@@ -141,7 +156,7 @@ public class RunningTransformations {
       Trans transformation = new Trans( transMeta );
 
       // adjust the log level
-      transformation.setLogLevel( LogLevel.MINIMAL );
+      transformation.setLogLevel( LogLevel.BASIC );
 
       System.out.println( "\nStarting transformation" );
 
