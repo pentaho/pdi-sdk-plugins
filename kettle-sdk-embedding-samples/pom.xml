@@ -14,8 +14,85 @@
     <jersey.version>1.19.1</jersey.version>
     <jsr311-api.version>1.1.1</jsr311-api.version>
     <osgi.version>1.8.0</osgi.version>
+
+
+
+
+    <!-- Test running configuration -->
+    <maven-surefire-plugin.reuseForks>false</maven-surefire-plugin.reuseForks>
+
+    <!-- Pentaho dependencies -->
+    <pentaho-vfs-browser.version>8.1.0.0-SNAPSHOT</pentaho-vfs-browser.version>
+    <pentaho-capability-manager.version>${project.version}</pentaho-capability-manager.version>
+
+    <!-- Third-party dependencies -->
+    <common.version>3.3.0-v20070426</common.version>
+    <jface.version>3.3.0-I20070606-0010</jface.version>
+    <commands.version>3.3.0-I20070605-0010</commands.version>
+    <jfreechart.version>1.0.13</jfreechart.version>
+
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.build.timestamp.format>yyyy-MM-dd hh.mm.ss</maven.build.timestamp.format>
+
+    <!-- License Configuration -->
+    <license.licenseName>apache_v2</license.licenseName>
+
+    <!-- Pentaho dependencies -->
+    <pentaho-xul.version>8.1.0.0-SNAPSHOT</pentaho-xul.version>
+    <pentaho-metastore.version>8.1.0.0-SNAPSHOT</pentaho-metastore.version>
+
+    <!-- Third-party dependencies -->
+    <org.eclipse.swt.version>4.6</org.eclipse.swt.version>
+    <js.version>1.7R3</js.version>
+    <httpclient.version>4.5.3</httpclient.version>
+    <httpccore.version>4.4.6</httpccore.version>
+    <commons-codec.version>1.10</commons-codec.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
+    <commons-logging.version>1.1.3</commons-logging.version>
+    <guava.version>17.0</guava.version>
+    <encoder.version>1.2</encoder.version>
+    <h2.version>1.2.131</h2.version>
+    <jaxen.version>1.1.1</jaxen.version>
+    <wstx-asl.version>3.2.4</wstx-asl.version>
+
+    <!-- Test dependencies -->
+    <mockito-all.version>1.10.19</mockito-all.version>
+    <powermock-module-junit4.version>1.6.6</powermock-module-junit4.version>
+    <powermock-api-mockito.version>1.6.6</powermock-api-mockito.version>
+    <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
+    <slf4j.version>1.7.7</slf4j.version>
+
   </properties>
+
   <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <!--<dependency>
+     <groupId>pentaho</groupId>
+     <artifactId>pentaho-osgi-utils-api</artifactId>
+     <version>${pdi.version}</version>
+   </dependency>
+   <dependency>
+     <groupId>pentaho</groupId>
+     <artifactId>pentaho-capability-manager</artifactId>
+     <version>${pentaho-capability-manager.version}</version>
+     <exclusions>
+       <exclusion>
+         <groupId>*</groupId>
+         <artifactId>*</artifactId>
+       </exclusion>
+     </exclusions>
+   </dependency>  -->
+
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.framework</artifactId>
@@ -26,6 +103,7 @@
       <artifactId>pentaho-platform-extensions</artifactId>
       <version>${platform.version}</version>
     </dependency>
+
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pdi-osgi-bridge-core</artifactId>
@@ -37,6 +115,18 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!--<dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pdi-osgi-bridge-activator</artifactId>
+      <version>${pdi.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>-->
+    <!--
     <dependency>
       <groupId>org.pentaho.di.plugins</groupId>
       <artifactId>meta-inject-plugin</artifactId>
@@ -48,6 +138,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    -->
     <dependency>
       <groupId>org.pentaho.di</groupId>
       <artifactId>pdi-ce</artifactId>
@@ -74,6 +165,12 @@
           <groupId>commons-httpclient</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <!-- -->
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-dbdialog</artifactId>
+      <version>${pdi.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
@@ -145,14 +242,138 @@
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
+
+
+
+
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-dbdialog</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Pentaho dependencies -->
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-vfs-browser</artifactId>
+      <version>${pentaho-vfs-browser.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-xul-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-xul-swt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-xul-swing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-capability-manager</artifactId>
+      <version>${pentaho-capability-manager.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+
+    <!-- Third-party dependencies -->
+    <dependency>
+      <groupId>org.eclipse.swt</groupId>
+      <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+      <version>${org.eclipse.swt.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.equinox</groupId>
+      <artifactId>common</artifactId>
+      <version>${common.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse</groupId>
+      <artifactId>jface</artifactId>
+      <version>${jface.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.core</groupId>
+      <artifactId>commands</artifactId>
+      <version>${commands.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${jfreechart.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>rhino</groupId>
+      <artifactId>js</artifactId>
+      <version>${js.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>pentaho-kettle</groupId>
+      <artifactId>kettle-engine</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito-all.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
+
+
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          <!-- copy osgi bundle dependencies into the <basedir>/plugin folder, where they are expected to exist -->
+          <!-- copy osgi bundle dependencies into the <basedir>/plugin folder, where they are expected to exist
           <execution>
             <id>copy-plugins</id>
             <phase>process-resources</phase>
@@ -164,7 +385,7 @@
               <includeScope>runtime</includeScope>
               <includeArtifactIds>meta-inject-plugin</includeArtifactIds>
             </configuration>
-          </execution>
+          </execution> -->
           <!-- unpack the pdi-ce assembly, so that we can copy the files necessary for proper kettle environment
                initialization into the correct locations -->
           <execution>
@@ -253,6 +474,19 @@
           </filesets>
         </configuration>
       </plugin>
+      <!--
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Import-Package>*</Import-Package>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Version>${project.version}</Bundle-Version>
+          </instructions>
+        </configuration>
+      </plugin>-->
     </plugins>
   </build>
 
