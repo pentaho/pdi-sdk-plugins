@@ -67,7 +67,7 @@ public class RunningTransformations {
     instance = new RunningTransformations();
 
     // run a transformation from the file system
-    Trans trans = instance.runTransformationFromFileSystem( "etl/parametrized_transformation.ktr" );
+    Trans trans = instance.runTransformationFromFileSystem( "etl/parameterized_transformation.ktr" );
 
     // retrieve logging appender
     LoggingBuffer appender = KettleLogStore.getAppender();
