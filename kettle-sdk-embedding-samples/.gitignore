@@ -1,6 +1,1 @@
-target/
-system/
-plugins/
-lib/
-libswt/
-classes/
+/target/

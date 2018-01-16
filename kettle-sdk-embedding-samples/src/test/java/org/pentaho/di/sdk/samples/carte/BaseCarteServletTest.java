@@ -22,15 +22,15 @@
 
 package org.pentaho.di.sdk.samples.carte;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.www.Carte;
 import org.pentaho.di.www.SlaveServerConfig;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public abstract class BaseCarteServletTest {
 
@@ -41,8 +41,6 @@ public abstract class BaseCarteServletTest {
 
   public static final String CARTE_USERNAME = "testUser";
   public static final String CARTE_PASSWORD = "testPass";
-  private static final int CARTE_TIMEOUT_SECONDS = 120;
-  private static boolean SERVER_READY = false;
 
   private static SlaveServerConfig getSlaveServerConfig() {
     port = String.valueOf( findFreePort() );
@@ -123,31 +121,22 @@ public abstract class BaseCarteServletTest {
     carteThread.start();
     System.out.println( "Started local Carte server on port " + port );
 
-    // Give Carte time to become available, which may take some time with karaf in the picture
-    final long startTime = System.currentTimeMillis();
-    while ( System.currentTimeMillis() - startTime < CARTE_TIMEOUT_SECONDS * 1000 ) {
+    // Allow up to 2 seconds for Carte to become available
+    for ( int i = 0; i < 20; i++ ) {
       if ( serverReady( hostname, port ) ) {
-        SERVER_READY = true;
         break;
       }
       Thread.sleep( 100 );
-    }
-    if ( !SERVER_READY ) {
-      throw new Exception( String.format( "Carte server did not start in the given timeframe of %s seconds ",
-        CARTE_TIMEOUT_SECONDS ) );
     }
   }
 
   @SuppressWarnings( "deprecation" )
   @AfterClass
   public static void tearDownAfterClass() {
-    if ( SERVER_READY ) {
-      try {
-        carteThread.stop();
-        SERVER_READY = false;
-      } catch ( Exception ignore ) {
-        // Ignore, just shutting down Carte
-      }
+    try {
+      carteThread.stop();
+    } catch ( Exception ignore ) {
+      // Ignore, just shutting down Carte
     }
   }
 }
