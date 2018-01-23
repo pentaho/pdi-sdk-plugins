@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>8.0-SNAPSHOT</version>
+    <version>8.0.0.2-147</version>
   </parent>
   <groupId>pentaho-kettle</groupId>
   <artifactId>kettle-sdk-plugin-parent</artifactId>
-  <version>8.0-SNAPSHOT</version>
+  <version>8.0.0.2-147</version>
   <packaging>pom</packaging>
   <name>Pentaho Data Integration SDK Parent POM</name>
   <modules>
@@ -24,9 +24,9 @@
     <eula-wrap_create-dist-phase></eula-wrap_create-dist-phase>
     <eula-wrap_assign-deps-to-properties-phase></eula-wrap_assign-deps-to-properties-phase>
     <mockito.version>1.10.19</mockito.version>
-    <dependency.pentaho-metadata.revision>8.0-SNAPSHOT</dependency.pentaho-metadata.revision>
+    <dependency.pentaho-metadata.revision>8.0.0.2-147</dependency.pentaho-metadata.revision>
     <eula-wrap_create-izpack-installer-jar-phase></eula-wrap_create-izpack-installer-jar-phase>
-    <dependency.kettle.revision>8.0-SNAPSHOT</dependency.kettle.revision>
+    <dependency.kettle.revision>8.0.0.2-147</dependency.kettle.revision>
     <eula-wrap_attach-dist-phase></eula-wrap_attach-dist-phase>
     <junit.version>4.12</junit.version>
   </properties>
