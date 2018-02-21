@@ -2,7 +2,7 @@
 *
 * Pentaho Data Integration
 *
-* Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+* Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
 *
 *******************************************************************************
 *
@@ -67,7 +67,7 @@ public class RunningTransformations {
     instance = new RunningTransformations();
 
     // run a transformation from the file system
-    Trans trans = instance.runTransformationFromFileSystem( "etl/parametrized_transformation.ktr" );
+    Trans trans = instance.runTransformationFromFileSystem( "etl/parameterized_transformation.ktr" );
 
     // retrieve logging appender
     LoggingBuffer appender = KettleLogStore.getAppender();
