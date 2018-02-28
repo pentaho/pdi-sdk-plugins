@@ -87,7 +87,7 @@ public class RunningTransformations {
     // repository and transformation exist, and can be accessed by the user and password used
     // uncomment and run after you've got a test repository in place
 
-    // instance.runTransformationFromRepository("test-repository", "/home/joe", "parametrized_transformation", "joe", "password");
+    // instance.runTransformationFromRepository("test-repository", "/home/joe", "parameterized_transformation", "joe", "password");
 
   }
 
@@ -186,7 +186,7 @@ public class RunningTransformations {
    * 
    * @param repositoryName the name of the repository to use 
    * @param directory the directory the transformation definition lives in (i.e. "/home/joe")
-   * @param transName the name of the transformation to execute  (i.e. "parametrized_transformation")
+   * @param transName the name of the transformation to execute  (i.e. "parameterized_transformation")
    * @param username the username to connect with
    * @param password the password to connect with
    * 
