@@ -2,7 +2,7 @@
 *
 * Pentaho Data Integration
 *
-* Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+* Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
 *
 *******************************************************************************
 *
@@ -89,7 +89,7 @@ public class RunningJobs {
     // uncomment and run after you've got a test repository in place
 
     // instance.runJobFromRepository("test-repository", "/home/joe",
-    // "parametrized_job", "joe", "password");
+    // "parameterized_job", "joe", "password");
 
   }
 
@@ -192,7 +192,7 @@ public class RunningJobs {
    * @param directory
    *            the directory the job definition lives in (i.e. "/home/joe")
    * @param jobName
-   *            the name of the job to execute (i.e. "parametrized_job")
+   *            the name of the job to execute (i.e. "parameterized_job")
    * @param username
    *            the username to connect with
    * @param password
