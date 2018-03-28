@@ -2,7 +2,7 @@
 *
 * Pentaho Data Integration
 *
-* Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+* Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
 *
 *******************************************************************************
 *
@@ -113,6 +113,8 @@ public class JobServletsTest extends BaseCarteServletTest {
     assertTrue( XMLHandler.getTagValue( result, "message" ).startsWith( "Job " ) );
     assertTrue( XMLHandler.getTagValue( result, "message" ).contains( jobName ) );
     assertTrue( XMLHandler.getTagValue( result, "message" ).contains( "was started." ) );
+
+    Thread.sleep( 500 );
 
     // Job Status
     jobStatusUrl = GetJobStatusSample.getUrlString( hostname, port, jobName );
