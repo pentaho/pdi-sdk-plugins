@@ -5,10 +5,10 @@
   <parent>
     <groupId>pentaho-kettle</groupId>
     <artifactId>kettle-sdk-plugin-parent</artifactId>
-    <version>8.0-SNAPSHOT</version>
+    <version>8.0.0.7-353</version>
   </parent>
   <artifactId>kettle-sdk-partitioner-plugin</artifactId>
-  <version>8.0-SNAPSHOT</version>
+  <version>8.0.0.7-353</version>
   <name>Pentaho Data Integration SDK Partitioner Plugin</name>
   <dependencyManagement>
     <dependencies>
