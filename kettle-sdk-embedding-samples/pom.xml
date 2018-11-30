@@ -91,5 +91,11 @@
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <version>3.2.7.ga</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
