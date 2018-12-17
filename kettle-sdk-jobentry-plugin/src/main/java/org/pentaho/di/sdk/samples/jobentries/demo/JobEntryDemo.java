@@ -58,16 +58,16 @@ import org.w3c.dom.Node;
  * 
  */
 @JobEntry(
-    id = "DemoJobEntry",
-    name = "DemoJobEntry.Name",
-    description = "DemoJobEntry.TooltipDesc",
-    image = "org/pentaho/di/sdk/samples/jobentries/demo/resources/demo.svg",
-    categoryDescription = "i18n:org.pentaho.di.job:JobCategory.Category.Conditions",
-    i18nPackageName = "org.pentaho.di.sdk.samples.jobentries.demo",
-    documentationUrl = "DemoJobEntry.DocumentationURL",
-    casesUrl = "DemoJobEntry.CasesURL",
-    forumUrl = "DemoJobEntry.ForumURL"
-  )
+        id = "DemoJobEntry",
+        name = "DemoJobEntry.Name",
+        description = "DemoJobEntry.TooltipDesc",
+        image = "org/pentaho/di/sdk/samples/jobentries/demo/resources/demo.svg",
+        categoryDescription = "i18n:org.pentaho.di.job:JobCategory.Category.Conditions",
+        i18nPackageName = "org.pentaho.di.sdk.samples.jobentries.demo",
+        documentationUrl = "DemoJobEntry.DocumentationURL",
+        casesUrl = "DemoJobEntry.CasesURL",
+        forumUrl = "DemoJobEntry.ForumURL"
+)
 public class JobEntryDemo extends JobEntryBase implements Cloneable, JobEntryInterface {
 
   /**

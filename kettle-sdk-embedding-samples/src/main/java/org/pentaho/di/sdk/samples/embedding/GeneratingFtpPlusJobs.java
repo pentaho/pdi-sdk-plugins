@@ -1,25 +1,21 @@
 package org.pentaho.di.sdk.samples.embedding;
 
-import java.io.File;
-
 import org.apache.commons.io.FileUtils;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.job.JobHopMeta;
 import org.pentaho.di.job.JobMeta;
-import org.pentaho.di.job.entries.ftp.JobEntryFTP;
 import org.pentaho.di.job.entries.special.JobEntrySpecial;
 import org.pentaho.di.job.entries.success.JobEntrySuccess;
 import org.pentaho.di.job.entries.writetolog.JobEntryWriteToLog;
 import org.pentaho.di.job.entry.JobEntryCopy;
+import org.pentaho.di.sdk.samples.embedding.entries.ftpplus.JobEntryFtpPlus;
 
-/**
- * This class demonstrates how to create a PDI FTP job definition
- * in code, and save it to a kjb file.
- */
-public class GeneratingFtpJobs {
+import java.io.File;
 
-    public static GeneratingFtpJobs instance;
+public class GeneratingFtpPlusJobs {
+
+    public static GeneratingFtpPlusJobs instance;
 
     /**
      * @param args not used
@@ -33,7 +29,7 @@ public class GeneratingFtpJobs {
             KettleEnvironment.init( false );
 
             // Create an instance of this demo class for convenience
-            instance = new GeneratingFtpJobs();
+            instance = new GeneratingFtpPlusJobs();
 
             // generates a simple job, returning the JobMeta object describing it
             JobMeta jobMeta = instance.generateJob();
@@ -70,7 +66,7 @@ public class GeneratingFtpJobs {
 
             // create empty transformation definition
             JobMeta jobMeta = new JobMeta();
-            jobMeta.setName( "Generated Demo FTP Job" );
+            jobMeta.setName( "Generated Demo FtpPlus Job" );
 
             // ------------------------------------------------------------------------------------
             // Create start entry and put it into the job
@@ -124,16 +120,16 @@ public class GeneratingFtpJobs {
 
             // crate and configure entry
             //
-            JobEntryFTP ftp = new JobEntryFTP();
-            ftp.setName( "FTP Job" );
+            JobEntryFtpPlus ftp = new JobEntryFtpPlus();
+            ftp.setName( "FtpPlus Job" );
             //set ftp parameters
-            ftp.setServerName("11.12.112.84");
+            ftp.setServerName("127.0.0.1");
             ftp.setPort("21");
             ftp.setUserName("ftp1");
             //
             ftp.setFtpDirectory("/");
             ftp.setWildcard(".*");
-            ftp.setTargetDirectory("/tmp/");
+            ftp.setTargetDirectory("/tmp");
 
 
             // wrap into JobEntryCopy object, which holds generic job entry information
@@ -185,4 +181,6 @@ public class GeneratingFtpJobs {
             return null;
         }
     }
+
+
 }
