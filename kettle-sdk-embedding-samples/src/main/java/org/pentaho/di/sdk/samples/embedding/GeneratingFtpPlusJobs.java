@@ -1,5 +1,6 @@
 package org.pentaho.di.sdk.samples.embedding;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.logging.LogLevel;
@@ -10,6 +11,7 @@ import org.pentaho.di.job.entries.success.JobEntrySuccess;
 import org.pentaho.di.job.entries.writetolog.JobEntryWriteToLog;
 import org.pentaho.di.job.entry.JobEntryCopy;
 import org.pentaho.di.sdk.samples.embedding.entries.ftpplus.JobEntryFtpPlus;
+import org.pentaho.di.sdk.samples.embedding.entries.ftpplus.JobEntryFtpPlusParamsDO;
 
 import java.io.File;
 
@@ -121,15 +123,18 @@ public class GeneratingFtpPlusJobs {
             // crate and configure entry
             //
             JobEntryFtpPlus ftp = new JobEntryFtpPlus();
-            ftp.setName( "FtpPlus Job" );
-            //set ftp parameters
-            ftp.setServerName("127.0.0.1");
-            ftp.setPort("21");
-            ftp.setUserName("ftp1");
-            //
-            ftp.setFtpDirectory("/");
-            ftp.setWildcard(".*");
-            ftp.setTargetDirectory("/tmp");
+            JobEntryFtpPlusParamsDO jobEntryFtpPlusParamsDO = new JobEntryFtpPlusParamsDO();
+            jobEntryFtpPlusParamsDO.setServerName("127.0.0.1");
+            jobEntryFtpPlusParamsDO.setPort("21");
+            jobEntryFtpPlusParamsDO.setUserName("ftp1");
+            jobEntryFtpPlusParamsDO.setFtpDirectory("/");
+            jobEntryFtpPlusParamsDO.setWildcard(".*");
+            jobEntryFtpPlusParamsDO.setTargetDirectory("/tmp");
+
+            ftp.setName("FtpPlus Download");
+            //ftp.setPluginId("JobEntryFtpPlus");
+            String jsonString = JSONObject.toJSONString(jobEntryFtpPlusParamsDO);
+            ftp.setJsonConfStr(jsonString);
 
 
             // wrap into JobEntryCopy object, which holds generic job entry information

@@ -1,5 +1,7 @@
 package org.pentaho.di.sdk.myplugins.jobentries.ftpplus;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
@@ -38,6 +40,7 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
 
     private String jsonConfStr = "{}";
     private String className = "JobEntryFtpPlus";
+    private JobEntryFtpPlusParamsDO jobEntryFtpPlusParamsDO;
 
     /**
      *  for i18n
@@ -57,6 +60,8 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
     public Result execute(Result prev_result, int nr) throws KettleException {
 
         //TODO ftp业务代码
+        log.logBasic("good: " + jobEntryFtpPlusParamsDO.toString());
+
 
         // indicate there are no errors
         prev_result.setNrErrors( 0 );
@@ -71,6 +76,8 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
         StringBuffer retval = new StringBuffer();
 
         retval.append(super.getXML());
+        JSONObject.toJSONString(jobEntryFtpPlusParamsDO);
+
         retval.append("      ").append(
                 XMLHandler.addTagValue("configInfo", jsonConfStr));
         retval.append("      ").append(
@@ -80,16 +87,17 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
     }
 
     @Override
-    public void loadXML(Node entrynode, List<DatabaseMeta> databases,
+    public void loadXML(Node entryNode, List<DatabaseMeta> databases,
                         List<SlaveServer> slaveServers, Repository rep, IMetaStore metaStore)
             throws KettleXMLException {
         try {
-            super.loadXML(entrynode, databases, slaveServers);
-            jsonConfStr = XMLHandler.getTagValue(entrynode, "configInfo");
+            super.loadXML(entryNode, databases, slaveServers);
+            jsonConfStr = XMLHandler.getTagValue(entryNode, "configInfo");
 
+            //解析json到java类
+            jobEntryFtpPlusParamsDO=  JSON.parseObject(jsonConfStr,JobEntryFtpPlusParamsDO.class);
 
-
-            className = XMLHandler.getTagValue(entrynode, "className");
+            className = XMLHandler.getTagValue(entryNode, "className");
         } catch (Exception e) {
             throw new KettleXMLException(BaseMessages.getString(PKG,
                     "JobEntryKettleUtil.UnableToLoadFromXml"), e);

@@ -28,12 +28,26 @@
           <artifactId>commons-httpclient</artifactId>
           <groupId>commons-httpclient</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>commons-codec</artifactId>
+          <groupId>commons-codec</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
       <version>${pdi.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-dbcp</artifactId>
+          <groupId>commons-dbcp</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-codec</artifactId>
+          <groupId>commons-codec</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.pentaho.di.plugins</groupId>
@@ -105,5 +119,27 @@
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
+
+    <!--add by myself-->
+      <!--fastjson-->
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>fastjson</artifactId>
+          <version>1.2.47</version>
+      </dependency>
+      <!--commons-net-->
+      <dependency>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+          <version>3.6</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.18.2</version>
+          <scope>provided</scope>
+      </dependency>
+
   </dependencies>
 </project>

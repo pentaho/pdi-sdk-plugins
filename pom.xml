@@ -38,11 +38,11 @@
       <name>Pentaho Public</name>
       <url>http://nexus.pentaho.org/content/groups/omni/</url>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
         <updatePolicy>daily</updatePolicy>
       </releases>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
         <updatePolicy>interval:15</updatePolicy>
       </snapshots>
     </repository>

@@ -169,7 +169,8 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
         wlConfigInfo.setLayoutData(fdlConfigInfo);
         wConfigInfo =
                 new StyledTextComp(jobEntry, shell, SWT.MULTI | SWT.LEFT | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL, "");
-        wConfigInfo.setText(BaseMessages.getString(PKG, "JobEntryKettleUtil.Script.Default"));
+        //默认json配置
+        wConfigInfo.setText("{}");
         props.setLook(wConfigInfo, Props.WIDGET_STYLE_FIXED);
         wConfigInfo.addModifyListener(lsMod);
         fdConfigInfo = new FormData();

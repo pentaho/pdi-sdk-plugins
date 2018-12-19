@@ -1,4 +1,4 @@
-package org.pentaho.di.sdk.myplugins.jobentries.ftpplus;
+package org.pentaho.di.sdk.samples.embedding.entries.ftpplus;
 
 
 import lombok.Getter;
@@ -70,5 +70,7 @@ public class JobEntryFtpPlusParamsDO {
     int limitFiles = 0;
     String targetFilename = null;
     static String FILE_SEPARATOR = "/";
+
+
 
 }
