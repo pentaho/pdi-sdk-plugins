@@ -127,12 +127,13 @@ public class GeneratingFtpPlusJobs {
             jobEntryFtpPlusParamsDO.setServerName("127.0.0.1");
             jobEntryFtpPlusParamsDO.setPort("21");
             jobEntryFtpPlusParamsDO.setUserName("ftp1");
+            jobEntryFtpPlusParamsDO.setPassword("ftp1");
             jobEntryFtpPlusParamsDO.setFtpDirectory("/");
             jobEntryFtpPlusParamsDO.setWildcard(".*");
             jobEntryFtpPlusParamsDO.setTargetDirectory("/tmp");
 
-            ftp.setName("FtpPlus Download");
-            //ftp.setPluginId("JobEntryFtpPlus");
+            ftp.setName("FtpPlus");
+            ftp.setPluginId("JobEntryFtpPlus");
             String jsonString = JSONObject.toJSONString(jobEntryFtpPlusParamsDO);
             ftp.setJsonConfStr(jsonString);
 

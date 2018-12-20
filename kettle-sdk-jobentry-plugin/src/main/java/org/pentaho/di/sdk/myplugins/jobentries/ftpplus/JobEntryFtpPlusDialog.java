@@ -1,5 +1,8 @@
 package org.pentaho.di.sdk.myplugins.jobentries.ftpplus;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -22,6 +25,10 @@ import org.pentaho.di.ui.job.dialog.JobDialog;
 import org.pentaho.di.ui.job.entry.JobEntryDialog;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
 
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 /**
  * @author shepf
  */
@@ -30,17 +37,24 @@ import org.pentaho.di.ui.trans.step.BaseStepDialog;
         pluginType = PluginDialog.PluginType.JOBENTRY)
 public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDialogInterface {
 
-    // for i18n purposes
+    /**
+     * for i18n
+     */
     private static Class<?> PKG = JobEntryFtpPlus.class;
-    // the job entry configuration object
+    /**
+     * the job entry configuration object
+     */
     private JobEntryFtpPlus jobEntry;
 
-    //配合界面
+    /**
+     * 界面
+     */
     private Label wlName;
     private Text wText;
     private FormData fdlName, fdName;
     private Label wlConfigInfo;
     private StyledTextComp wConfigInfo;
+    private JEditorPane editPane;
     private FormData fdlConfigInfo, fdConfigInfo;
     private Label wlPosition;
     private FormData fdlPosition;
@@ -49,7 +63,6 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
     private Shell shell;
     private SelectionAdapter lsDef;
     private boolean changed;
-
 
     /**
      * 配置名称
@@ -115,7 +128,7 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
         // at the bottom
         BaseStepDialog.positionBottomButtons(shell, new Button[]{wOK, wCancel, wGet}, margin, null);
 
-        // Filename line
+        // Label组件
         wlName = new Label(shell, SWT.RIGHT);
         wlName.setText(BaseMessages.getString(PKG, "JobEntryKettleUtil.Jobname.Label"));
         props.setLook(wlName);
@@ -242,23 +255,27 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
         lsGet = new Listener() {
             @Override
             public void handleEvent(Event e) {
-//                jobEntry.setClassName(wClassName.getText());
-//                jobEntry.setConfigInfo(wConfigInfo.getText());
-                String conf = null;
-                String msg = "获取默认配置失败，请输入正确的类名称";
+                String prettyConf = null;
+                String msg = "获取默认配置失败";
                 try {
-                    //conf = jobEntry.getDefaultConfigInfo();
+                    String confStr = jobEntry.getConfigInfo();
+                    //TODO json格式化显示
+                    //prettyConf = JSON.toJSONString(confStr,SerializerFeature.PrettyFormat);
+                    //JSONObject jsonObject = JSON.parseObject(jobEntry.environmentSubstitute(confStr));
+                    //prettyConf = jsonObject.toJSONString();
+                    prettyConf = JSON.toJSONString(jobEntry.environmentSubstitute(confStr),SerializerFeature.PrettyFormat);
+
                 } catch (Exception e1) {
                     msg = e1.getMessage();
                 }
-                if (StringUtils.isBlank(conf)) {
+                if (StringUtils.isBlank(prettyConf)) {
                     wConfigInfo.setText("{}");
                     MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
                     mb.setMessage(msg);
                     mb.setText("错误");
                     mb.open();
                 } else {
-                    wConfigInfo.setText(conf);
+                    wConfigInfo.setText(prettyConf);
                 }
             }
         };
@@ -327,12 +344,12 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
         if (jobEntry.getName() != null) {
             wText.setText(jobEntry.getName());
         }
-//        if ( jobEntry.getClassName() != null ) {
-//            wClassName.setText( jobEntry.getClassName() );
-//        }
-//        if ( jobEntry.getConfigInfo() != null ) {
-//            wConfigInfo.setText( jobEntry.getConfigInfo() );
-//        }
+        if ( jobEntry.getClassName() != null ) {
+            wClassName.setText( jobEntry.getClassName() );
+        }
+        if ( jobEntry.getConfigInfo() != null ) {
+            wConfigInfo.setText( jobEntry.getConfigInfo() );
+        }
 
         wText.selectAll();
         wText.setFocus();
@@ -353,8 +370,7 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
             return;
         }
 
-        jobEntry.setJsonConfStr(wText.getText());
-        //jobEntry.setConfigInfo( wConfigInfo.getText() );
+        jobEntry.setConfigInfo( wConfigInfo.getText() );
         //jobEntry.setClassName( wClassName.getText() );
         dispose();
     }

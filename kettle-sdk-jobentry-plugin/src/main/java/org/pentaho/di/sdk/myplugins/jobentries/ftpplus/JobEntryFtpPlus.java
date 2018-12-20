@@ -2,6 +2,9 @@ package org.pentaho.di.sdk.myplugins.jobentries.ftpplus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
@@ -24,6 +27,8 @@ import java.net.SocketException;
 import java.util.List;
 
 /**
+ * configInfo json字符串格式
+ * getDefaultConfigInfo() 格式化 json str
  * @author shepf
  */
 @JobEntry(
@@ -36,24 +41,19 @@ import java.util.List;
         casesUrl = "JobEntryFtpPlus.CasesURL",
         forumUrl = "JobEntryFtpPlus.ForumURL"
 )
+@Getter
+@Setter
+@ToString
 public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntryInterface {
 
-    private String jsonConfStr = "{}";
-    private String className = "JobEntryFtpPlus";
+    private String configInfo = "{}";
+    private String className = this.getClass().getName();
     private JobEntryFtpPlusParamsDO jobEntryFtpPlusParamsDO;
 
     /**
      *  for i18n
      */
     private static Class<?> PKG = JobEntryFtpPlus.class;
-
-    public String getJsonConfStr() {
-        return jsonConfStr;
-    }
-
-    public void setJsonConfStr(String jsonConfStr) {
-        this.jsonConfStr = jsonConfStr;
-    }
 
 
     @Override
@@ -62,6 +62,47 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
         //TODO ftp业务代码
         log.logBasic("good: " + jobEntryFtpPlusParamsDO.toString());
 
+        FTPClient ftp = new FTPClient();
+        FTPClientConfig config = new FTPClientConfig();
+
+        //config.setXXX(YYY); // change required options
+        // for example config.setServerTimeZoneId("Pacific/Pitcairn")
+        ftp.configure(config );
+        boolean error = false;
+        try {
+            int reply;
+            String server = "127.0.0.1";
+            ftp.connect(server);
+            ftp.login("ftp1",null);
+
+
+            System.out.println("Connected to " + server + ".");
+            System.out.print(ftp.getReplyString());
+
+            // After connection attempt, you should check the reply code to verify
+            // success.
+            reply = ftp.getReplyCode();
+
+            if(!FTPReply.isPositiveCompletion(reply)) {
+                ftp.disconnect();
+                System.err.println("FTP server refused connection.");
+                System.exit(1);
+            }
+            // transfer files
+            ftp.logout();
+        } catch(IOException e) {
+            error = true;
+            e.printStackTrace();
+        } finally {
+            if(ftp.isConnected()) {
+                try {
+                    ftp.disconnect();
+                } catch(IOException ioe) {
+                    // do nothing
+                }
+            }
+            System.exit(error ? 1 : 0);
+        }
 
         // indicate there are no errors
         prev_result.setNrErrors( 0 );
@@ -79,7 +120,7 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
         JSONObject.toJSONString(jobEntryFtpPlusParamsDO);
 
         retval.append("      ").append(
-                XMLHandler.addTagValue("configInfo", jsonConfStr));
+                XMLHandler.addTagValue("configInfo", configInfo));
         retval.append("      ").append(
                 XMLHandler.addTagValue("className", className));
 
@@ -92,10 +133,10 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
             throws KettleXMLException {
         try {
             super.loadXML(entryNode, databases, slaveServers);
-            jsonConfStr = XMLHandler.getTagValue(entryNode, "configInfo");
+            configInfo = XMLHandler.getTagValue(entryNode, "configInfo");
 
             //解析json到java类
-            jobEntryFtpPlusParamsDO=  JSON.parseObject(jsonConfStr,JobEntryFtpPlusParamsDO.class);
+            jobEntryFtpPlusParamsDO=  JSON.parseObject(configInfo,JobEntryFtpPlusParamsDO.class);
 
             className = XMLHandler.getTagValue(entryNode, "className");
         } catch (Exception e) {
@@ -103,6 +144,7 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
                     "JobEntryKettleUtil.UnableToLoadFromXml"), e);
         }
     }
+
 
 
 
