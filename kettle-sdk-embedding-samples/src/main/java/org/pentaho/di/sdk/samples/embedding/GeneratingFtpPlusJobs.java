@@ -1,5 +1,6 @@
 package org.pentaho.di.sdk.samples.embedding;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.pentaho.di.core.KettleEnvironment;
@@ -134,7 +135,8 @@ public class GeneratingFtpPlusJobs {
 
             ftp.setName("FtpPlus");
             ftp.setPluginId("JobEntryFtpPlus");
-            String jsonString = JSONObject.toJSONString(jobEntryFtpPlusParamsDO);
+            String jsonString = JSON.toJSONString(jobEntryFtpPlusParamsDO);
+            //String jsonString = JSONObject.toJSONString(jobEntryFtpPlusParamsDO);
             ftp.setJsonConfStr(jsonString);
 
 

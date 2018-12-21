@@ -23,7 +23,6 @@ import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.List;
 
 /**
@@ -144,9 +143,5 @@ public class JobEntryFtpPlus extends JobEntryBase implements Cloneable, JobEntry
                     "JobEntryKettleUtil.UnableToLoadFromXml"), e);
         }
     }
-
-
-
-
 
 }

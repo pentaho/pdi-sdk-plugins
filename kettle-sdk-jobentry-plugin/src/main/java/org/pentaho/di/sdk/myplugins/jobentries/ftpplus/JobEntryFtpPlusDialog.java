@@ -1,6 +1,7 @@
 package org.pentaho.di.sdk.myplugins.jobentries.ftpplus;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang.StringUtils;
@@ -259,11 +260,9 @@ public class JobEntryFtpPlusDialog extends JobEntryDialog implements JobEntryDia
                 String msg = "获取默认配置失败";
                 try {
                     String confStr = jobEntry.getConfigInfo();
-                    //TODO json格式化显示
-                    //prettyConf = JSON.toJSONString(confStr,SerializerFeature.PrettyFormat);
-                    //JSONObject jsonObject = JSON.parseObject(jobEntry.environmentSubstitute(confStr));
-                    //prettyConf = jsonObject.toJSONString();
-                    prettyConf = JSON.toJSONString(jobEntry.environmentSubstitute(confStr),SerializerFeature.PrettyFormat);
+
+                    //格式化显示json
+                    prettyConf = JSON.toJSONString(jobEntry.getJobEntryFtpPlusParamsDO(),SerializerFeature.PrettyFormat);
 
                 } catch (Exception e1) {
                     msg = e1.getMessage();
