@@ -5,10 +5,10 @@
   <parent>
     <groupId>pentaho-kettle</groupId>
     <artifactId>kettle-sdk-plugin-parent</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1.0.21-185</version>
   </parent>
   <artifactId>kettle-sdk-embedding-samples</artifactId>
-  <version>7.1-SNAPSHOT</version>
+  <version>7.1.0.21-185</version>
   <name>Pentaho Data Integration SDK Embedding Samples</name>
   <properties>
     <jersey.version>1.19.1</jersey.version>
