@@ -68,7 +68,7 @@ public class RunningJobs {
     instance = new RunningJobs();
 
     // run a job from the file system
-    Job job = instance.runJobFromFileSystem( "etl/parameterized_job.kjb" );
+    Job job = instance.runJobFromFileSystem( "etl/generated_ftp_job.kjb" );
 
     // retrieve logging appender
     LoggingBuffer appender = KettleLogStore.getAppender();
@@ -146,7 +146,7 @@ public class RunningJobs {
       Job job = new Job( null, jobMeta );
 
       // adjust the log level
-      job.setLogLevel( LogLevel.MINIMAL );
+      job.setLogLevel( LogLevel.ROWLEVEL );
 
       System.out.println( "\nStarting job" );
 

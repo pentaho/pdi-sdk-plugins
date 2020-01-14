@@ -1,4 +1,8 @@
 # PDI SDK Samples
+fork官方demo，编写通用dialog
+操作界面统一使用一个JSON对象作为参数设置途径。
+采用JSON作为参数配置，省去ui调试设计步骤，只需一个类就可以开发一个插件。
+
 
 ### Pre-requisites for building the project:
 * Maven, version 3+
