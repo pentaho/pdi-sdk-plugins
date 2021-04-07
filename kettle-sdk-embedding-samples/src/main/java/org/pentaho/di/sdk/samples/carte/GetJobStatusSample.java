@@ -72,7 +72,7 @@ public class GetJobStatusSample extends AbstractSample {
     int code = httpResponse.getStatusLine().getStatusCode();
     String response = HttpClientUtil.responseToString( httpResponse );
     method.releaseConnection();
-    if ( code >= HttpStatus.SC_BAD_REQUEST ) {
+    if ( code >= HttpStatus.SC_INTERNAL_SERVER_ERROR ) {
       System.out.println( "Error occurred during getting job status." );
       return null;
     }
