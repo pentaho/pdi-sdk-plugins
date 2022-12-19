@@ -5,10 +5,10 @@
   <parent>
     <groupId>pentaho-kettle</groupId>
     <artifactId>kettle-sdk-plugin-parent</artifactId>
-    <version>9.4.0.0-SNAPSHOT</version>
+    <version>9.4.0.1-387</version>
   </parent>
   <artifactId>kettle-sdk-step-plugin</artifactId>
-  <version>9.4.0.0-SNAPSHOT</version>
+  <version>9.4.0.1-387</version>
   <name>Pentaho Data Integration SDK Step Plugin</name>
   <dependencies>
     <dependency>
