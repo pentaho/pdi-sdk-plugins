@@ -5,10 +5,10 @@
   <parent>
     <groupId>pentaho-kettle</groupId>
     <artifactId>kettle-sdk-plugin-parent</artifactId>
-    <version>10.2.0.0-SNAPSHOT</version>
+    <version>10.2.0.1-229</version>
   </parent>
   <artifactId>kettle-sdk-database-plugin</artifactId>
-  <version>10.2.0.0-SNAPSHOT</version>
+  <version>10.2.0.1-229</version>
   <name>Pentaho Data Integration SDK Database Plugin</name>
   <properties>
     <csvjdbc.version>1.0.29</csvjdbc.version>
