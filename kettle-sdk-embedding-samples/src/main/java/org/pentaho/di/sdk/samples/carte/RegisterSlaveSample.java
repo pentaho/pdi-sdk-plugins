@@ -14,7 +14,8 @@
 package org.pentaho.di.sdk.samples.carte;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -81,7 +82,7 @@ public class RegisterSlaveSample extends AbstractSample {
     String lastActiveDate = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss.SSS" ).format( new Date() );
     String xml = "<SlaveServerDetection>"
       + "  <slaveserver>"
-      + "    <name>" + StringEscapeUtils.escapeXml( name ) + "</name>"
+      + "    <name>" + StringEscapeUtils.escapeXml11( name ) + "</name>"
       + "    <hostname>" + host + "</hostname>"
       + "    <port>" + port + "</port>"
       + "    <webAppName/>"
@@ -93,7 +94,7 @@ public class RegisterSlaveSample extends AbstractSample {
       + "    <master>N</master>"
       + "  </slaveserver>"
       + "  <active>Y</active>"
-      + "  <last_active_date>" + StringEscapeUtils.escapeXml( lastActiveDate ) + "</last_active_date>"
+      + "  <last_active_date>" + StringEscapeUtils.escapeXml11( lastActiveDate ) + "</last_active_date>"
       + "  <last_inactive_date/>"
       + "</SlaveServerDetection>";
     return xml;
