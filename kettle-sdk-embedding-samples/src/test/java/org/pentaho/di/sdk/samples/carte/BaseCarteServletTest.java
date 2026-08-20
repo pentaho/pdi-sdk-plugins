@@ -15,8 +15,10 @@
 package org.pentaho.di.sdk.samples.carte;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.URL;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,6 +30,7 @@ public abstract class BaseCarteServletTest {
 
   private static SlaveServerConfig carteConfig;
   private static Thread carteThread;
+  private static final AtomicReference<Throwable> carteStartupFailure = new AtomicReference<>();
   public static String hostname = "localhost";
   public static String port;
 
@@ -76,50 +79,55 @@ public abstract class BaseCarteServletTest {
     throw new IllegalStateException( "Could not find a free TCP/IP port to start embedded Jetty HTTP Server on" );
   }
 
-  public static boolean serverReady(String host, String port) {
-    boolean result = false;
-    Socket s = null;
+  public static boolean serverReady( String host, String port ) {
+    HttpURLConnection connection = null;
     try {
-      s = new Socket(host, Integer.valueOf( port ) );
-      result = true;
-    } catch (Exception e) {
-      result = false;
+      URL statusUrl = new URL( "http://" + host + ":" + port + "/kettle/status?xml=Y" );
+      connection = (HttpURLConnection) statusUrl.openConnection();
+      connection.setConnectTimeout( 100 );
+      connection.setReadTimeout( 100 );
+      int responseCode = connection.getResponseCode();
+      return responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_UNAUTHORIZED;
+    } catch ( IOException e ) {
+      return false;
     } finally {
-      if( s != null ) {
-        try {
-          s.close();
-        } catch ( Exception e ) {
-          // Ignore
-        }
+      if ( connection != null ) {
+        connection.disconnect();
       }
     }
-    return result;
   }
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     carteConfig = getSlaveServerConfig();
+    SlaveServerConfig config = carteConfig;
+    carteStartupFailure.set( null );
     carteThread = new Thread() {
       @Override
       public void run() {
         try {
-          Carte.runCarte( carteConfig );
-        } catch ( Exception e ) {
-          System.out.println( e );
-          System.exit( 0 );
+          Carte.runCarte( config );
+        } catch ( Throwable throwable ) {
+          carteStartupFailure.compareAndSet( null, throwable );
         }
       }
     };
+    carteThread.setDaemon( true );
     carteThread.start();
     System.out.println( "Started local Carte server on port " + port );
 
-    // Allow up to 2 seconds for Carte to become available
-    for ( int i = 0; i < 20; i++ ) {
+    // Wait until the status servlet, rather than only the TCP port, accepts requests.
+    for ( int i = 0; i < 100; i++ ) {
+      Throwable startupFailure = carteStartupFailure.get();
+      if ( startupFailure != null ) {
+        throw new IllegalStateException( "Unable to start local Carte server", startupFailure );
+      }
       if ( serverReady( hostname, port ) ) {
-        break;
+        return;
       }
       Thread.sleep( 100 );
     }
+    throw new IllegalStateException( "Timed out waiting for local Carte server on port " + port );
   }
 
   @SuppressWarnings( "deprecation" )
