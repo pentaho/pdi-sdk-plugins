@@ -32,13 +32,9 @@
     <module>kettle-sdk-plugin-assembly</module>
   </modules>
   <properties>
-    <eula-wrap_create-dist-phase></eula-wrap_create-dist-phase>
-    <eula-wrap_assign-deps-to-properties-phase></eula-wrap_assign-deps-to-properties-phase>
     <mockito.version>5.10.0</mockito.version>
     <pentaho-metadata.version>11.1.0.0-SNAPSHOT</pentaho-metadata.version>
-    <eula-wrap_create-izpack-installer-jar-phase></eula-wrap_create-izpack-installer-jar-phase>
     <pdi.version>11.1.0.0-SNAPSHOT</pdi.version>
-    <eula-wrap_attach-dist-phase></eula-wrap_attach-dist-phase>
     <junit.version>4.13.2</junit.version>
   </properties>
 
