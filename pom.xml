@@ -16,11 +16,11 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>11.1.0.0-SNAPSHOT</version>
+    <version>11.1.0.0-419</version>
   </parent>
   <groupId>pentaho-kettle</groupId>
   <artifactId>kettle-sdk-plugin-parent</artifactId>
-  <version>11.1.0.0-SNAPSHOT</version>
+  <version>11.1.0.0-419</version>
   <packaging>pom</packaging>
   <name>Pentaho Data Integration SDK Parent POM</name>
   <modules>
@@ -33,8 +33,8 @@
   </modules>
   <properties>
     <mockito.version>5.10.0</mockito.version>
-    <pentaho-metadata.version>11.1.0.0-SNAPSHOT</pentaho-metadata.version>
-    <pdi.version>11.1.0.0-SNAPSHOT</pdi.version>
+    <pentaho-metadata.version>11.1.0.0-419</pentaho-metadata.version>
+    <pdi.version>11.1.0.0-419</pdi.version>
     <junit.version>4.13.2</junit.version>
   </properties>
 
